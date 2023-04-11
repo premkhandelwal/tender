@@ -1,4 +1,7 @@
 // ignore_for_file: prefer_const_constructors, avoid_unnecessary_containers, unnecessary_new
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -30,12 +33,15 @@ class SignInWidget extends StatelessWidget {
                       padding: EdgeInsets.only(
                         left: MediaQuery.of(context).size.width / 25,
                       ),
-                      child: Text("Welcome To",
-                          style: GoogleFonts.lato(
-                              textStyle: TextStyle(
+                      child: Text(
+                        "Welcome To",
+                        style: GoogleFonts.lato(
+                          textStyle: TextStyle(
                             fontSize: 28,
                             color: Color(0xff8D33C3),
-                          ),),),
+                          ),
+                        ),
+                      ),
                     ),
                     Padding(
                       padding: EdgeInsets.only(
@@ -87,11 +93,25 @@ class SignInWidget extends StatelessWidget {
                               ),
                             ),
                           ),
-                          onPressed: () { 
+                          onPressed: () {
                             final provider = Provider.of<GoogleSignInProvider>(
                                 context,
                                 listen: false);
-                            provider.googleLogin();
+                            provider.googleLogin().then((value) {
+                              Map<String, dynamic> userData = {
+                                "name": value.user!.displayName.toString(),
+                                "email": value.user!.email.toString(),
+                                "google_id": value.credential!.accessToken
+                              };
+                              // print('userBody ${userData}');
+
+                              FirebaseFirestore.instance
+                                  .collection("User")
+                                  .add(userData);
+                            });
+                           
+
+                           
                           },
                         ),
                       ],
