@@ -42,7 +42,6 @@ class _formWidgetState extends State<formWidget> {
   String? url;
   XFile? pickedFile;
   void selectImage() async {
-
     final ImagePicker picker = ImagePicker();
     pickedFile = await picker.pickImage(
       source: ImageSource.gallery,
@@ -402,7 +401,7 @@ class _formWidgetState extends State<formWidget> {
                         Map<String, dynamic> addTender = {
                           "name": nameEditingController.text,
                           "image": url,
-                          "category": "category",
+                          "category": dropdownvalue,
                           "quantity": productQuantity
                         };
                         print('addTender Body ${addTender}');
