@@ -50,13 +50,14 @@ class _formWidgetState extends State<formWidget> {
     );
     setState(() {});
 
-    final ref = FirebaseStorage.instance.ref().child('files/pickedFile!.name');
+    final ref =
+        FirebaseStorage.instance.ref().child('files/${pickedFile!.name}');
     ref.putFile(File(pickedFile!.path));
     url = await FirebaseStorage.instance
         .ref()
-        .child('files/pickedFile!.name')
+        .child('files/${pickedFile!.name}')
         .getDownloadURL();
-    // print('url $url');
+    print('url $url');
   }
 
   Widget formBox() {
@@ -404,10 +405,13 @@ class _formWidgetState extends State<formWidget> {
                           "category": dropdownvalue,
                           "quantity": productQuantity
                         };
-                        print('addTender Body ${addTender}');
+                        // print('addTender Body ${addTender}');
                         FirebaseFirestore.instance
                             .collection('AddTender')
-                            .add(addTender);
+                            .add(addTender)
+                            .then((value) {
+                          Navigator.pop(context);
+                        });
                       },
                       child: Align(
                         alignment: Alignment.center,

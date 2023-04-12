@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 class ItemWidget extends StatelessWidget {
   const ItemWidget({
     super.key,
-    required this.data, 
+    required this.data,
   });
 
   final DocumentSnapshot<Object?> data;
@@ -13,9 +13,8 @@ class ItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color:const Color(0xffe4d3e8),
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20.0)),
+      color: const Color(0xffe4d3e8),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
       child: Container(
         alignment: Alignment.center,
         height: MediaQuery.of(context).size.height / 9,
@@ -28,9 +27,11 @@ class ItemWidget extends StatelessWidget {
               maxWidth: 66,
               maxHeight: 64,
             ),
-            child: Image.network(
-              data['image'],
-            ),
+            child: data['image'] == null
+                ? Container()
+                : Image.network(
+                    data['image'],
+                  ),
           ),
           title: Text(
             data['name'],
