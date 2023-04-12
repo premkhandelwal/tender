@@ -16,22 +16,14 @@ class previousTender extends StatefulWidget {
 class _previousTenderState extends State<previousTender> {
   String? imgUrl;
 
-  // Future<List> fetchAllTenders() async {
-  //   List contactList = [];
-  //   CollectionReference tenders =
-  //        FirebaseFirestore.instance.collection('').doc('details').get();
-  //   contactList = documentSnapshot.data()['contacts'];
-  //   return contactList;
-  // }
+  
   CollectionReference tenders =
       FirebaseFirestore.instance.collection('AddTender');
   @override
   Widget build(BuildContext context) {
-    // final dummyList = List.generate(10, (index) => CatalogModel.items[0]);
     return StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection('AddTender').snapshots(),
         builder: (BuildContext context, snapshot) {
-          // print('snapshotData ${snapshot.data!.docs[0]}');
           return snapshot.connectionState == ConnectionState.waiting
               ? CircularProgressIndicator()
               : Container(

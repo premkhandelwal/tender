@@ -37,7 +37,7 @@ class ItemWidget extends StatelessWidget {
             style: GoogleFonts.ubuntu(
               fontSize: 18,
               fontWeight: FontWeight.w400,
-              color: Color(0xff8C33C1),
+              color: const Color(0xff8C33C1),
             ),
           ),
           subtitle: Text(
