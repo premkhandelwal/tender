@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:vender/pages/select_vendor.dart';
 import 'package:vender/provider/google_sign_in_provider.dart';
 
 class SignInWidget extends StatelessWidget {
@@ -93,25 +94,33 @@ class SignInWidget extends StatelessWidget {
                               ),
                             ),
                           ),
-                          onPressed: () {
+                          onPressed: () async {
+                            String userDocId = "";
                             final provider = Provider.of<GoogleSignInProvider>(
                                 context,
                                 listen: false);
-                            provider.googleLogin().then((value) {
+                            provider.googleLogin().then((value) async {
                               Map<String, dynamic> userData = {
                                 "name": value.user!.displayName.toString(),
                                 "email": value.user!.email.toString(),
-                                "google_id": value.credential!.accessToken
+                                "google_id": value.credential!.accessToken,
+                                'type': ''
                               };
-                              // print('userBody ${userData}');
-
-                              FirebaseFirestore.instance
+                              await FirebaseFirestore.instance
                                   .collection("User")
-                                  .add(userData);
+                                  .add(userData)
+                                  .then((DocumentReference doc) {
+                                userDocId = doc.id;
+                                print('doc ${doc.id}');
+                              });
+                            }).then((value) {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => SelectVendor(
+                                            userDocId: userDocId,
+                                          )));
                             });
-                           
-
-                           
                           },
                         ),
                       ],

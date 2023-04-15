@@ -1,4 +1,5 @@
 // ignore_for_file: prefer_const_constructors, unnecessary_new
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -6,10 +7,13 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:vender/routes/routes.dart';
 
 class SelectVendor extends StatelessWidget {
-  const SelectVendor({Key? key}) : super(key: key);
+  String? userDocId;
+
+  SelectVendor({this.userDocId});
 
   @override
   Widget build(BuildContext context) {
+    print('docuser $userDocId');
     return Scaffold(
         body: SafeArea(
       child: Center(
@@ -128,8 +132,14 @@ class SelectVendor extends StatelessWidget {
                             width: MediaQuery.of(context).size.width / 1.45,
                             child: ElevatedButton.icon(
                               onPressed: () {
-                                Navigator.pushNamed(
-                                    context, MyRoutes.customerDashboardRoute);
+                                print('doc1 ${userDocId}');
+                                FirebaseFirestore.instance
+                                    .collection('User')
+                                    .doc('$userDocId')
+                                    .update({'type': 'customer'}).then((value) {
+                                  Navigator.pushNamed(
+                                      context, MyRoutes.customerDashboardRoute);
+                                });
                               },
                               label: Padding(
                                 padding: EdgeInsets.fromLTRB(
@@ -168,7 +178,6 @@ class SelectVendor extends StatelessWidget {
                         ),
                       ],
                     ),
-                   
                   ],
                 ),
               ),

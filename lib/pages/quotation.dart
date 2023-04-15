@@ -1,7 +1,13 @@
 // ignore_for_file: camel_case_types,prefer_const_literals_to_create_immutables, prefer_const_constructors, sized_box_for_whitespace, avoid_unnecessary_containers
 
 import 'package:flutter/material.dart';
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:vender/bloc/AddTenderBloc/bloc/add_tender_bloc.dart';
 
 class Quotation extends StatefulWidget {
   const Quotation({super.key});
@@ -10,16 +16,39 @@ class Quotation extends StatefulWidget {
   State<Quotation> createState() => _QuotationState();
 }
 
-String dropdownvalue = 'Furniture';
-
-final _category = [
-  "Furniture",
-  "Food",
-  "Transport",
-  "Personal",
-];
-
 class _QuotationState extends State<Quotation> {
+  String dropdownvalue = 'Furniture';
+
+  final _category = [
+    "Furniture",
+    "Food",
+    "Transport",
+    "Personal",
+  ];
+  int productQuantity = 1;
+  TextEditingController nameEditingController = TextEditingController();
+  TextEditingController priceEditingController = TextEditingController();
+  String? url;
+  XFile? pickedFile;
+  UploadTask? uploadTask;
+  void selectImage() async {
+    final ImagePicker picker = ImagePicker();
+    pickedFile = await picker.pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 1080,
+      maxHeight: 1080,
+    );
+    setState(() {});
+
+    final ref = FirebaseStorage.instance
+        .ref()
+        .child('images/Quotations/${pickedFile!.name}');
+    uploadTask = ref.putFile(File(pickedFile!.path));
+    final snapshot = await uploadTask!.whenComplete(() => {});
+    url = await snapshot.ref.getDownloadURL();
+    print('downloadUrl $url');
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -110,7 +139,9 @@ class _QuotationState extends State<Quotation> {
                           Column(
                             children: [
                               InkWell(
-                                onTap: () {},
+                                onTap: () {
+                                  selectImage();
+                                },
                                 child: Padding(
                                   padding: EdgeInsets.only(right: 9.0),
                                   child: SizedBox(
@@ -128,13 +159,10 @@ class _QuotationState extends State<Quotation> {
                                           color: Color(0xff8C33C1),
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(10))),
-                                      child: IconTheme(
-                                        data: IconThemeData(opacity: 100),
-                                        child: ImageIcon(
-                                          AssetImage(
-                                              "assets/images/quotation.png"),
-                                        ),
-                                      ),
+                                      child: (pickedFile == null)
+                                          ? Image.asset(
+                                              "assets/icons/product_img_rect.png")
+                                          : Image.file(File(pickedFile!.path)),
                                     ),
                                   ),
                                 ),
@@ -158,7 +186,25 @@ class _QuotationState extends State<Quotation> {
                                   ),
                                 ),
                               ),
-                              // Expanded(child: TextField())
+                              SizedBox(
+                                height: 30,
+                                width: 180,
+                                child: TextFormField(
+                                  controller: nameEditingController,
+                                  decoration: InputDecoration(
+                                    isDense: true,
+                                    border: UnderlineInputBorder(),
+                                    hintText: "Table",
+                                    hintStyle: GoogleFonts.ubuntu(
+                                      textStyle: TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w400,
+                                          letterSpacing: 0.75),
+                                    ),
+                                    contentPadding: EdgeInsets.only(left: 26),
+                                  ),
+                                ),
+                              )
                             ],
                           ),
                         ],
@@ -211,6 +257,12 @@ class _QuotationState extends State<Quotation> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   InkWell(
+                                    onTap: () {
+                                      productQuantity != 1
+                                          ? productQuantity--
+                                          : productQuantity;
+                                      setState(() {});
+                                    },
                                     child: SizedBox(
                                       height: 21,
                                       width: 21,
@@ -237,7 +289,7 @@ class _QuotationState extends State<Quotation> {
                                   Padding(
                                     padding: EdgeInsets.only(left: 5, right: 5),
                                     child: Text(
-                                      "1",
+                                      productQuantity.toString(),
                                       style: GoogleFonts.roboto(
                                         textStyle: TextStyle(
                                           fontSize: 20,
@@ -248,6 +300,10 @@ class _QuotationState extends State<Quotation> {
                                     ),
                                   ),
                                   InkWell(
+                                    onTap: () {
+                                      productQuantity++;
+                                      setState(() {});
+                                    },
                                     child: SizedBox(
                                       height: 21,
                                       width: 21,
@@ -374,17 +430,35 @@ class _QuotationState extends State<Quotation> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.center,
                                         children: [
-                                          Padding(
-                                            padding: EdgeInsets.only(left: 10),
-                                            child: Text(
-                                              "10,000",
-                                              textAlign: TextAlign.center,
-                                              style: GoogleFonts.lato(
-                                                textStyle: TextStyle(
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.w500,
-                                                  color: Color(0xffBC96C7),
+                                          SizedBox(
+                                            height: 30,
+                                            width: 90,
+                                            child: TextFormField(
+                                              keyboardType:
+                                                  TextInputType.number,
+                                              controller:
+                                                  priceEditingController,
+                                              decoration: InputDecoration(
+                                                errorBorder: InputBorder.none,
+                                                enabledBorder: InputBorder.none,
+                                                disabledBorder:
+                                                    InputBorder.none,
+                                                focusedErrorBorder:
+                                                    InputBorder.none,
+                                                focusedBorder: InputBorder.none,
+                                                isDense: true,
+                                                border: InputBorder.none,
+                                                hintText: "10,000",
+                                                hintStyle: GoogleFonts.ubuntu(
+                                                  textStyle: TextStyle(
+                                                      fontSize: 15,
+                                                      color: Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      letterSpacing: 0.75),
                                                 ),
+                                                contentPadding: EdgeInsets.only(
+                                                    left: 5, top: 4),
                                               ),
                                             ),
                                           ),
@@ -408,7 +482,27 @@ class _QuotationState extends State<Quotation> {
                     left: MediaQuery.of(context).size.width / 3.8,
                     right: MediaQuery.of(context).size.width / 3.8),
                 child: InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    if (nameEditingController.text.isNotEmpty &&
+                        url != null &&
+                        dropdownvalue != "" &&
+                        priceEditingController.text.isNotEmpty) {
+                      Map<String, dynamic> addQuotation = {
+                        "name": nameEditingController.text,
+                        "image": url,
+                        "category": dropdownvalue,
+                        "quantity": productQuantity,
+                        "amount": priceEditingController.text,
+                      };
+                      print('AddQuotation Body ${addQuotation}');
+                      FirebaseFirestore.instance
+                          .collection('Quotations')
+                          .add(addQuotation)
+                          .then((value) {
+                        Navigator.pop(context);
+                      });
+                    }
+                  },
                   child: Container(
                     height: 45,
                     width: 180,
