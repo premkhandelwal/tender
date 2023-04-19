@@ -32,6 +32,14 @@ class _QuotationState extends State<Quotation> {
     "Personal",
   ];
   int productQuantity = 1;
+  @override
+  void initState() {
+    productQuantity = widget.productQuantity;
+    dropdownvalue = widget.productCategory;
+    // TODO: implement initState
+    super.initState();
+  }
+
   TextEditingController nameEditingController = TextEditingController();
   TextEditingController priceEditingController = TextEditingController();
   // String? url;
@@ -198,11 +206,12 @@ class _QuotationState extends State<Quotation> {
                                 height: 30,
                                 width: 180,
                                 child: TextFormField(
+                                  readOnly: true,
                                   controller: nameEditingController,
                                   decoration: InputDecoration(
                                     isDense: true,
                                     border: UnderlineInputBorder(),
-                                    hintText: "Table",
+                                    hintText: widget.productname,
                                     hintStyle: GoogleFonts.ubuntu(
                                       textStyle: TextStyle(
                                           fontSize: 15,
