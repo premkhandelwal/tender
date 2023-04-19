@@ -6,11 +6,17 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:vender/bloc/AddTenderBloc/bloc/add_tender_bloc.dart';
 
 class Quotation extends StatefulWidget {
-  const Quotation({super.key});
+  String productname = "";
+  int productQuantity = 1;
+  String productCategory = "";
+  String productimage = "";
+  Quotation(
+      {this.productCategory = "",
+      this.productQuantity = 1,
+      this.productname = "",
+      this.productimage = ""});
 
   @override
   State<Quotation> createState() => _QuotationState();
@@ -28,26 +34,26 @@ class _QuotationState extends State<Quotation> {
   int productQuantity = 1;
   TextEditingController nameEditingController = TextEditingController();
   TextEditingController priceEditingController = TextEditingController();
-  String? url;
-  XFile? pickedFile;
-  UploadTask? uploadTask;
-  void selectImage() async {
-    final ImagePicker picker = ImagePicker();
-    pickedFile = await picker.pickImage(
-      source: ImageSource.gallery,
-      maxWidth: 1080,
-      maxHeight: 1080,
-    );
-    setState(() {});
+  // String? url;
+  // XFile? pickedFile;
+  // UploadTask? uploadTask;
+  // void selectImage() async {
+  //   final ImagePicker picker = ImagePicker();
+  //   pickedFile = await picker.pickImage(
+  //     source: ImageSource.gallery,
+  //     maxWidth: 1080,
+  //     maxHeight: 1080,
+  //   );
+  //   setState(() {});
 
-    final ref = FirebaseStorage.instance
-        .ref()
-        .child('images/Quotations/${pickedFile!.name}');
-    uploadTask = ref.putFile(File(pickedFile!.path));
-    final snapshot = await uploadTask!.whenComplete(() => {});
-    url = await snapshot.ref.getDownloadURL();
-    print('downloadUrl $url');
-  }
+  //   final ref = FirebaseStorage.instance
+  //       .ref()
+  //       .child('images/Quotations/${pickedFile!.name}');
+  //   uploadTask = ref.putFile(File(pickedFile!.path));
+  //   final snapshot = await uploadTask!.whenComplete(() => {});
+  //   url = await snapshot.ref.getDownloadURL();
+  //   print('downloadUrl $url');
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -140,7 +146,7 @@ class _QuotationState extends State<Quotation> {
                             children: [
                               InkWell(
                                 onTap: () {
-                                  selectImage();
+                                  // selectImage();
                                 },
                                 child: Padding(
                                   padding: EdgeInsets.only(right: 9.0),
@@ -148,22 +154,24 @@ class _QuotationState extends State<Quotation> {
                                     height: 95,
                                     width: 95,
                                     child: Container(
-                                      decoration: BoxDecoration(
-                                          boxShadow: <BoxShadow>[
-                                            BoxShadow(
-                                                color: Colors.grey
-                                                    .withOpacity(1.0),
-                                                blurRadius: 2.0,
-                                                offset: Offset(2.0, 2.0))
-                                          ],
-                                          color: Color(0xff8C33C1),
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(10))),
-                                      child: (pickedFile == null)
-                                          ? Image.asset(
-                                              "assets/icons/product_img_rect.png")
-                                          : Image.file(File(pickedFile!.path)),
-                                    ),
+                                        decoration: BoxDecoration(
+                                            boxShadow: <BoxShadow>[
+                                              BoxShadow(
+                                                  color: Colors.grey
+                                                      .withOpacity(1.0),
+                                                  blurRadius: 2.0,
+                                                  offset: Offset(2.0, 2.0))
+                                            ],
+                                            color: Color(0xff8C33C1),
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(10))),
+                                        child:
+                                            Image.network(widget.productimage)
+                                        // (pickedFile == null)
+                                        //     ? Image.asset(
+                                        //         "assets/icons/product_img_rect.png")
+                                        //     : Image.file(File(pickedFile!.path)),
+                                        ),
                                   ),
                                 ),
                               ),
@@ -484,12 +492,12 @@ class _QuotationState extends State<Quotation> {
                 child: InkWell(
                   onTap: () {
                     if (nameEditingController.text.isNotEmpty &&
-                        url != null &&
+                        //  url   != null &&
                         dropdownvalue != "" &&
                         priceEditingController.text.isNotEmpty) {
                       Map<String, dynamic> addQuotation = {
                         "name": nameEditingController.text,
-                        "image": url,
+                        "image": widget.productimage,
                         "category": dropdownvalue,
                         "quantity": productQuantity,
                         "amount": priceEditingController.text,

@@ -4,11 +4,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vender/models/catalog.dart';
+import 'package:vender/pages/quotation.dart';
+import 'package:vender/routes/routes.dart';
 import 'package:vender/widgets/item_widget.dart';
 
 class previousTender extends StatefulWidget {
-  const previousTender({Key? key}) : super(key: key);
-
+  bool isVender = false;
+  previousTender({this.isVender = false});
   @override
   State<previousTender> createState() => _previousTenderState();
 }
@@ -16,7 +18,6 @@ class previousTender extends StatefulWidget {
 class _previousTenderState extends State<previousTender> {
   String? imgUrl;
 
-  
   CollectionReference tenders =
       FirebaseFirestore.instance.collection('AddTender');
   @override
@@ -36,7 +37,16 @@ class _previousTenderState extends State<previousTender> {
                           itemBuilder: (BuildContext context, int index) {
                             DocumentSnapshot data = snapshot.data!.docs[index];
 
-                            return ItemWidget(data: data);
+                            return InkWell(
+                                onTap: () {
+                                  if (widget.isVender) {
+
+                                    Navigator.push(
+                                        context,MaterialPageRoute(builder: (context)=>
+                                        Quotation(productCategory: data['category'], productQuantity: data['quantity'], productname:  data['name'],
+                                        productimage: data['image'],)));
+                                  }                                },
+                                child: ItemWidget(data: data));
                           },
                         ),
                       ),
