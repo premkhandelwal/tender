@@ -6,4 +6,5 @@ class MyRoutes {
   static String previousTenderRoute = "/previousTender";
   static String newTenderFormRoute = "/newTenderForm";
   static String quotationRoute = "/quotation";
+  static String venderDashBoardRoute = "/venderDashBoardRoute";
 }

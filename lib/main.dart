@@ -10,6 +10,7 @@ import 'package:vender/pages/login_page.dart';
 import 'package:vender/pages/new_tender_form.dart';
 import 'package:vender/pages/previous_tender.dart';
 import 'package:vender/pages/select_vendor.dart';
+import 'package:vender/pages/venderDashBoard.dart';
 import 'package:vender/provider/google_sign_in_provider.dart';
 import 'package:vender/routes/routes.dart';
 
@@ -31,7 +32,7 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           initialRoute: MyRoutes.loginRoute,
           routes: {
-            
+            MyRoutes.venderDashBoardRoute: (context) => VenderDashBoard(),
             MyRoutes.loginRoute: (context) => LoginPage(),
             MyRoutes.selectVendorRoute: (context) => SelectVendor(),
             MyRoutes.customerDashboardRoute: (context) => CustomerDashbord(),

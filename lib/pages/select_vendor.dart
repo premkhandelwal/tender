@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vender/routes/routes.dart';
 
 class SelectVendor extends StatelessWidget {
@@ -74,7 +75,16 @@ class SelectVendor extends StatelessWidget {
                             height: MediaQuery.of(context).size.height / 18,
                             width: MediaQuery.of(context).size.width / 1.45,
                             child: ElevatedButton.icon(
-                                onPressed: () {},
+                                onPressed: () async {
+                                  // Obtain shared preferences.
+                                  final SharedPreferences prefs =
+                                      await SharedPreferences.getInstance();
+
+                                  await prefs.setBool('isCustomer', false);
+                                   // ignore: use_build_context_synchronously
+                                   Navigator.pushNamed(
+                                    context, MyRoutes.venderDashBoardRoute);
+                                },
                                 label: Padding(
                                   padding: EdgeInsets.fromLTRB(
                                       MediaQuery.of(context).size.width / 15,
@@ -131,15 +141,21 @@ class SelectVendor extends StatelessWidget {
                             height: MediaQuery.of(context).size.height / 18,
                             width: MediaQuery.of(context).size.width / 1.45,
                             child: ElevatedButton.icon(
-                              onPressed: () {
+                              onPressed: () async{
+                                   final SharedPreferences prefs =
+                                      await SharedPreferences.getInstance();
+
+                                  await prefs.setBool('isCustomer', true);
+                                Navigator.pushNamed(
+                                    context, MyRoutes.customerDashboardRoute);
                                 print('doc1 ${userDocId}');
-                                FirebaseFirestore.instance
-                                    .collection('User')
-                                    .doc('$userDocId')
-                                    .update({'type': 'customer'}).then((value) {
-                                  Navigator.pushNamed(
-                                      context, MyRoutes.customerDashboardRoute);
-                                });
+                                // FirebaseFirestore.instance
+                                //     .collection('User')
+                                //     .doc('$userDocId')
+                                //   .update({'type': 'customer'}).then((value) {
+                                // Navigator.pushNamed(
+                                //     context, MyRoutes.customerDashboardRoute);
+                                //  });
                               },
                               label: Padding(
                                 padding: EdgeInsets.fromLTRB(
