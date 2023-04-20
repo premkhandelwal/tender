@@ -254,9 +254,12 @@ class CustomerDashbord extends StatelessWidget {
                             width: MediaQuery.of(context).size.width / 1.45,
                             child: ElevatedButton.icon(
                               onPressed: () async {
-                                Navigator.of(context).pushNamedAndRemoveUntil(
-                                    MyRoutes.loginRoute, (route) => false);
-                                await FirebaseAuth.instance.signOut();
+                                await FirebaseAuth.instance
+                                    .signOut()
+                                    .then((value) {
+                                  Navigator.of(context).pushNamedAndRemoveUntil(
+                                      MyRoutes.loginRoute, (route) => false);
+                                });
                               },
                               label: Padding(
                                 padding: EdgeInsets.fromLTRB(

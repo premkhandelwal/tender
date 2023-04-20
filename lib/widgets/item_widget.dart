@@ -1,11 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:vender/pages/Quotation.dart';
 
 class ItemWidget extends StatelessWidget {
+  final bool isVender;
   const ItemWidget({
     super.key,
     required this.data,
+    required this.isVender,
   });
 
   final DocumentSnapshot<Object?> data;
@@ -19,7 +22,19 @@ class ItemWidget extends StatelessWidget {
         alignment: Alignment.center,
         height: MediaQuery.of(context).size.height / 9,
         child: ListTile(
-          onTap: () {},
+          onTap: () {
+            if (isVender) {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => Quotation(
+                            productCategory: data['category'],
+                            productQuantity: data['quantity'],
+                            productname: data['name'],
+                            productimage: data['image'],
+                          )));
+            }
+          },
           leading: ConstrainedBox(
             constraints: const BoxConstraints(
               minWidth: 66,

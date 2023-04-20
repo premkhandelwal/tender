@@ -2,10 +2,7 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:vender/models/catalog.dart';
 import 'package:vender/pages/quotation.dart';
-import 'package:vender/routes/routes.dart';
 import 'package:vender/widgets/item_widget.dart';
 
 class previousTender extends StatefulWidget {
@@ -37,16 +34,8 @@ class _previousTenderState extends State<previousTender> {
                           itemBuilder: (BuildContext context, int index) {
                             DocumentSnapshot data = snapshot.data!.docs[index];
 
-                            return InkWell(
-                                onTap: () {
-                                  if (widget.isVender) {
-
-                                    Navigator.push(
-                                        context,MaterialPageRoute(builder: (context)=>
-                                        Quotation(productCategory: data['category'], productQuantity: data['quantity'], productname:  data['name'],
-                                        productimage: data['image'],)));
-                                  }                                },
-                                child: ItemWidget(data: data));
+                            return ItemWidget(data: data,
+                            isVender: widget.isVender,);
                           },
                         ),
                       ),

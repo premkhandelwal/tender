@@ -500,16 +500,13 @@ class _QuotationState extends State<Quotation> {
                     right: MediaQuery.of(context).size.width / 3.8),
                 child: InkWell(
                   onTap: () {
-                    if (nameEditingController.text.isNotEmpty &&
-                        //  url   != null &&
-                        dropdownvalue != "" &&
-                        priceEditingController.text.isNotEmpty) {
+                    if (priceEditingController.text.isNotEmpty) {
                       Map<String, dynamic> addQuotation = {
-                        "name": nameEditingController.text,
+                        "name": widget.productname,
                         "image": widget.productimage,
-                        "category": dropdownvalue,
-                        "quantity": productQuantity,
-                        "amount": priceEditingController.text,
+                        "category": widget.productQuantity,
+                        "quantity": widget.productQuantity,
+                        "price": priceEditingController.text,
                       };
                       print('AddQuotation Body ${addQuotation}');
                       FirebaseFirestore.instance
