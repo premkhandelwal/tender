@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:vender/pages/venderseeTender.dart';
+import 'package:vender/pages/venderSeeTender.dart';
 import 'package:vender/routes/routes.dart';
 
 class VenderDashBoard extends StatelessWidget {
