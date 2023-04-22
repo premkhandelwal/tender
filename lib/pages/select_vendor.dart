@@ -82,7 +82,7 @@ class SelectVendor extends StatelessWidget {
 
                                   await prefs.setBool('isCustomer', false);
                                    // ignore: use_build_context_synchronously
-                                   Navigator.pushNamed(
+                                   Navigator.pushReplacementNamed(
                                     context, MyRoutes.venderDashBoardRoute);
                                 },
                                 label: Padding(
@@ -146,7 +146,7 @@ class SelectVendor extends StatelessWidget {
                                       await SharedPreferences.getInstance();
 
                                   await prefs.setBool('isCustomer', true);
-                                Navigator.pushNamed(
+                                Navigator.pushReplacementNamed(
                                     context, MyRoutes.customerDashboardRoute);
                                 print('doc1 ${userDocId}');
                                 // FirebaseFirestore.instance

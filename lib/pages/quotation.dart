@@ -515,6 +515,14 @@ class _QuotationState extends State<Quotation> {
                           .then((value) {
                         Navigator.pop(context);
                       });
+                    } else {
+                      const snackBar = SnackBar(
+                        content: Text('Fill the price'),
+                      );
+
+// Find the ScaffoldMessenger in the widget tree
+// and use it to show a SnackBar.
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
                     }
                   },
                   child: Container(
