@@ -11,7 +11,7 @@ class ItemWidget extends StatelessWidget {
     required this.isVender,
   });
 
-  final DocumentSnapshot<Object?> data;
+  final Map<String, dynamic> data;
 
   @override
   Widget build(BuildContext context) {

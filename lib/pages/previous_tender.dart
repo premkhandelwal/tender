@@ -2,6 +2,8 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vender/logic/bloc/AddTenderBloc/add_tender_bloc.dart';
 import 'package:vender/pages/quotation.dart';
 import 'package:vender/widgets/item_widget.dart';
 
@@ -19,29 +21,35 @@ class _previousTenderState extends State<previousTender> {
       FirebaseFirestore.instance.collection('AddTender');
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('AddTender').snapshots(),
-        builder: (BuildContext context, snapshot) {
-          return snapshot.connectionState == ConnectionState.waiting
-              ? CircularProgressIndicator()
-              : Container(
-                  height: MediaQuery.of(context).size.height / 1.52,
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: ListView.builder(
-                          itemCount: snapshot.data?.docs.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            DocumentSnapshot data = snapshot.data!.docs[index];
+    return BlocBuilder<AddTenderBloc, AddTenderState>(
+      builder: (context, state) {
+        if (state is FetchTenderInProgressState) {
+          return Center(child: CircularProgressIndicator());
+        }
+        if (state is FetchTenderSuccessState) {
+          return Container(
+            height: MediaQuery.of(context).size.height / 1.52,
+            child: Column(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: state.tenderData.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      Map<String, dynamic> data = state.tenderData[index];
 
-                            return ItemWidget(data: data,
-                            isVender: widget.isVender,);
-                          },
-                        ),
-                      ),
-                    ],
+                      return ItemWidget(
+                        data: data,
+                        isVender: widget.isVender,
+                      );
+                    },
                   ),
-                );
-        });
+                ),
+              ],
+            ),
+          );
+        }
+        return Text("No Previous Tenders found");
+      },
+    );
   }
 }
