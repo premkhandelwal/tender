@@ -38,7 +38,7 @@ class CustomerDashbord extends StatelessWidget {
                           child: InkWell(
                             onTap: () {
                               Navigator.pushNamed(
-                                  context, MyRoutes.addNewTenderRoute);
+                                  context, MyRoutes.tenderRoute);
                             },
                             child: SizedBox(
                                 width: MediaQuery.of(context).size.width / 1.1,

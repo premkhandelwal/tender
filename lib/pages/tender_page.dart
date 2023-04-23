@@ -1,18 +1,28 @@
 // ignore_for_file: camel_case_types, prefer_const_constructors, avoid_unnecessary_containers, unnecessary_new, sized_box_for_whitespace, unused_local_variable, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:vender/logic/bloc/AddTenderBloc/add_tender_bloc.dart';
 import 'package:vender/pages/previous_tender.dart';
 import 'package:vender/routes/routes.dart';
 
-class addNewTender extends StatefulWidget {
-  const addNewTender({Key? key}) : super(key: key);
+class TenderPage extends StatefulWidget {
+  const TenderPage({Key? key}) : super(key: key);
 
   @override
-  State<addNewTender> createState() => _addNewTenderState();
+  State<TenderPage> createState() => _TenderPageState();
 }
 
-class _addNewTenderState extends State<addNewTender> {
+class _TenderPageState extends State<TenderPage> {
+  late AddTenderBloc addTenderBloc;
+  @override
+  void initState() {
+    super.initState();
+    addTenderBloc = BlocProvider.of<AddTenderBloc>(context);
+    addTenderBloc.add(FetchPreviousTenders());
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -47,9 +57,10 @@ class _addNewTenderState extends State<addNewTender> {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10)),
                         child: InkWell(
-                          onTap: () {
-                            Navigator.pushNamed(
-                                context, MyRoutes.newTenderFormRoute);
+                          onTap: () async {
+                            await Navigator.pushNamed(
+                                context, MyRoutes.addNewTenderRoute);
+                            addTenderBloc.add(FetchPreviousTenders());
                           },
                           child: Align(
                             alignment: Alignment.center,
