@@ -3,7 +3,9 @@ class MyRoutes {
   static String selectVendorRoute = "/selectVendor";
   static String customerDashboardRoute = "/customerDashboard";
   static String addNewTenderRoute = "/addNewTender";
+  static String tenderRoute = "/tenderPage";
   static String previousTenderRoute = "/previousTender";
   static String newTenderFormRoute = "/newTenderForm";
   static String quotationRoute = "/quotation";
+  static String venderDashBoardRoute = "/venderDashBoardRoute";
 }

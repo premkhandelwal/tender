@@ -1,47 +1,63 @@
-// ignore_for_file: unnecessary_null_comparison, prefer_const_literals_to_create_immutables,prefer_const_constructors, avoid_print, sized_box_for_whitespace, sort_child_properties_last
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:vender/models/catalog.dart';
+import 'package:vender/pages/Quotation.dart';
 
 class ItemWidget extends StatelessWidget {
-  final Item item;
+  final bool isVender;
+  const ItemWidget({
+    super.key,
+    required this.data,
+    required this.isVender,
+  });
 
-  const ItemWidget({Key? key, required this.item})
-      : assert(item != null),
-        super(key: key);
+  final Map<String, dynamic> data;
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Color(0xffe4d3e8),
+      color: const Color(0xffe4d3e8),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
       child: Container(
         alignment: Alignment.center,
         height: MediaQuery.of(context).size.height / 9,
         child: ListTile(
-          onTap: () {},
+          onTap: () {
+            if (isVender) {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => Quotation(
+                            productCategory: data['category'],
+                            productQuantity: data['quantity'],
+                            productname: data['name'],
+                            productimage: data['image'],
+                          )));
+            }
+          },
           leading: ConstrainedBox(
-            constraints: BoxConstraints(
+            constraints: const BoxConstraints(
               minWidth: 66,
               minHeight: 64,
               maxWidth: 66,
               maxHeight: 64,
             ),
-            child: Image.asset(
-              item.image,
-            ),
+            child: data['image'] == null
+                ? Container()
+                : Image.network(
+                    data['image'],
+                  ),
           ),
           title: Text(
-            item.name,
+            data['name'],
             style: GoogleFonts.ubuntu(
               fontSize: 18,
               fontWeight: FontWeight.w400,
-              color: Color(0xff8C33C1),
+              color: const Color(0xff8C33C1),
             ),
           ),
           subtitle: Text(
-            "Qty: ${item.qty}\nCategory: ${item.category}",
+            "Qty: ${data['quantity']}\nCategory: ${data['category']}",
             style: GoogleFonts.ubuntu(
               fontSize: 15,
               fontWeight: FontWeight.w400,

@@ -16,7 +16,7 @@ class GoogleSignInProvider extends ChangeNotifier {
   //     final googleUser = await googleSignIn.signIn();
   //     if (googleUser == null) return;
   //     _user = googleUser;
- 
+
   //     final googleAuth = await googleUser.authentication;
 
   //     final credential = GoogleAuthProvider.credential(
@@ -26,7 +26,7 @@ class GoogleSignInProvider extends ChangeNotifier {
   //   } catch (e) {
   //     print(e.toString());
   //   }
-  Future<void> googleLogin() async{
+  Future<UserCredential> googleLogin() async {
     //create an instance of the firebase auth and google sign in
     FirebaseAuth auth = FirebaseAuth.instance;
     final GoogleSignIn googleSignIn = GoogleSignIn();
@@ -35,22 +35,22 @@ class GoogleSignInProvider extends ChangeNotifier {
     final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
 
     //Obtain the auth details from request
-    final GoogleSignInAuthentication googleAuth = await googleUser!.authentication;
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser!.authentication;
 
     //create new credentials
-    final AuthCredential credential = GoogleAuthProvider.credential(accessToken: googleAuth.accessToken,idToken: googleAuth.idToken);
+    final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
 
     //sign in the user with the credentials
-    final UserCredential userCredential = await auth.signInWithCredential(credential);
-
+    final UserCredential userCredential =
+        await auth.signInWithCredential(credential);
+    return userCredential;
   }
 
-    Future logOut() async {
-        final GoogleSignIn googleSignIn = GoogleSignIn();
-        await googleSignIn.signOut();
-      }
-    // notifyListeners();
+  Future logOut() async {
+    final GoogleSignIn googleSignIn = GoogleSignIn();
+    await googleSignIn.signOut();
   }
-
-  
-
+  // notifyListeners();
+}
