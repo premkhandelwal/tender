@@ -80,10 +80,16 @@ class SelectVendor extends StatelessWidget {
                                   final SharedPreferences prefs =
                                       await SharedPreferences.getInstance();
 
-                                  await prefs.setBool('isCustomer', false);
-                                   // ignore: use_build_context_synchronously
-                                   Navigator.pushReplacementNamed(
-                                    context, MyRoutes.venderDashBoardRoute);
+                                  await prefs.setBool('isVendor', true);
+                                  // ignore: use_build_context_synchronously
+                                  FirebaseFirestore.instance
+                                      .collection('User')
+                                      .doc('$userDocId')
+                                      .update({'type': 'vendor'}).then(
+                                          (value) {
+                                    Navigator.pushReplacementNamed(
+                                        context, MyRoutes.venderDashBoardRoute);
+                                  });
                                 },
                                 label: Padding(
                                   padding: EdgeInsets.fromLTRB(
@@ -141,21 +147,20 @@ class SelectVendor extends StatelessWidget {
                             height: MediaQuery.of(context).size.height / 18,
                             width: MediaQuery.of(context).size.width / 1.45,
                             child: ElevatedButton.icon(
-                              onPressed: () async{
-                                   final SharedPreferences prefs =
-                                      await SharedPreferences.getInstance();
+                              onPressed: () async {
+                                final SharedPreferences prefs =
+                                    await SharedPreferences.getInstance();
 
-                                  await prefs.setBool('isCustomer', true);
-                                Navigator.pushReplacementNamed(
-                                    context, MyRoutes.customerDashboardRoute);
+                                await prefs.setBool('isCustomer', true);
+
                                 print('doc1 ${userDocId}');
-                                // FirebaseFirestore.instance
-                                //     .collection('User')
-                                //     .doc('$userDocId')
-                                //   .update({'type': 'customer'}).then((value) {
-                                // Navigator.pushNamed(
-                                //     context, MyRoutes.customerDashboardRoute);
-                                //  });
+                                FirebaseFirestore.instance
+                                    .collection('User')
+                                    .doc('$userDocId')
+                                    .update({'type': 'customer'}).then((value) {
+                                  Navigator.pushNamed(
+                                      context, MyRoutes.customerDashboardRoute);
+                                });
                               },
                               label: Padding(
                                 padding: EdgeInsets.fromLTRB(

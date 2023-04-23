@@ -5,8 +5,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vender/pages/select_vendor.dart';
 import 'package:vender/provider/google_sign_in_provider.dart';
+import 'package:vender/routes/routes.dart';
 
 class SignInWidget extends StatelessWidget {
   const SignInWidget({super.key});
@@ -96,9 +98,14 @@ class SignInWidget extends StatelessWidget {
                           ),
                           onPressed: () async {
                             String userDocId = "";
+                            final SharedPreferences prefs =
+                                await SharedPreferences.getInstance();
+
+                            // ignore: use_build_context_synchronously
                             final provider = Provider.of<GoogleSignInProvider>(
                                 context,
                                 listen: false);
+
                             provider.googleLogin().then((value) async {
                               Map<String, dynamic> userData = {
                                 "name": value.user!.displayName.toString(),
@@ -106,20 +113,33 @@ class SignInWidget extends StatelessWidget {
                                 "google_id": value.credential!.accessToken,
                                 'type': ''
                               };
+
                               await FirebaseFirestore.instance
                                   .collection("User")
                                   .add(userData)
                                   .then((DocumentReference doc) {
                                 userDocId = doc.id;
                                 print('doc ${doc.id}');
+                                prefs.setString('docID', doc.id);
                               });
                             }).then((value) {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => SelectVendor(
-                                            userDocId: userDocId,
-                                          )));
+                              print('yes vendor ${prefs.getBool('isVendor')}');
+                              print(
+                                  'yes customer ${prefs.getBool('isCustomer')}');
+                              if (prefs.getBool('isVendor') ?? false) {
+                                Navigator.pushReplacementNamed(
+                                    context, MyRoutes.venderDashBoardRoute);
+                              } else if (prefs.getBool('isCustomer') ?? false) {
+                                Navigator.pushNamed(
+                                    context, MyRoutes.customerDashboardRoute);
+                              } else {
+                                Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => SelectVendor(
+                                              userDocId: userDocId,
+                                            )));
+                              }
                             });
                           },
                         ),

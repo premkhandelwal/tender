@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:vender/pages/venderSeeTender.dart';
 import 'package:vender/routes/routes.dart';
 
@@ -47,9 +48,9 @@ class VenderDashBoard extends StatelessWidget {
                                     color: Color(0xff8C33C1),
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(10))),
-                                child:const  IconTheme(
-                                  data:  IconThemeData(opacity: 100),
-                                  child:  ImageIcon(
+                                child: const IconTheme(
+                                  data: IconThemeData(opacity: 100),
+                                  child: ImageIcon(
                                     AssetImage("assets/icons/quatation.png"),
                                     size: 43,
                                     color: Colors.white,
@@ -90,6 +91,8 @@ class VenderDashBoard extends StatelessWidget {
             width: MediaQuery.of(context).size.width / 1.45,
             child: ElevatedButton.icon(
               onPressed: () async {
+                final GoogleSignIn googleSignIn = GoogleSignIn();
+                await googleSignIn.signOut();
                 await FirebaseAuth.instance.signOut().then((value) {
                   Navigator.of(context).pushNamedAndRemoveUntil(
                       MyRoutes.loginRoute, (route) => false);

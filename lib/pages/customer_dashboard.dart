@@ -2,6 +2,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:vender/routes/routes.dart';
 
 class CustomerDashbord extends StatelessWidget {
@@ -254,6 +255,8 @@ class CustomerDashbord extends StatelessWidget {
                             width: MediaQuery.of(context).size.width / 1.45,
                             child: ElevatedButton.icon(
                               onPressed: () async {
+                                  final GoogleSignIn googleSignIn = GoogleSignIn();
+                await googleSignIn.signOut();
                                 await FirebaseAuth.instance
                                     .signOut()
                                     .then((value) {

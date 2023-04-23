@@ -455,6 +455,13 @@ class _formWidgetState extends State<formWidget> {
                               .then((value) {
                             Navigator.pop(context);
                           });
+                        }else{
+                            const snackBar = SnackBar(
+                        content: Text('Fill all the details'),
+                      );
+
+
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
                         }
                       },
                       child: Align(

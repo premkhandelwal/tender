@@ -60,11 +60,17 @@ class _InitialScreenState extends State<LoginPage> {
         // ignore: use_build_context_synchronously
         Navigator.pushReplacementNamed(
             context, MyRoutes.customerDashboardRoute);
-      } else {
+      } else if (prefs.getBool('isVendor') ?? false) {
         print('yes 2');
 
         // ignore: use_build_context_synchronously
         Navigator.pushReplacementNamed(context, MyRoutes.venderDashBoardRoute);
+      }else{
+        print('yes 3');
+
+        // ignore: use_build_context_synchronously
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => SignInWidget()));
       }
     } else {
       print('yes 3');

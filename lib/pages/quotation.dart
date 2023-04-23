@@ -469,7 +469,7 @@ class _QuotationState extends State<Quotation> {
                                                 hintStyle: GoogleFonts.ubuntu(
                                                   textStyle: TextStyle(
                                                       fontSize: 15,
-                                                      color: Colors.black,
+                                                      color: Colors.grey,
                                                       fontWeight:
                                                           FontWeight.w400,
                                                       letterSpacing: 0.75),
@@ -520,8 +520,7 @@ class _QuotationState extends State<Quotation> {
                         content: Text('Fill the price'),
                       );
 
-// Find the ScaffoldMessenger in the widget tree
-// and use it to show a SnackBar.
+
                       ScaffoldMessenger.of(context).showSnackBar(snackBar);
                     }
                   },
