@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:vender/models/quotationModel.dart';
 import 'package:vender/models/tender.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:vender/pages/quotation.dart';
 
 class FirebaseProvider {
   FirebaseFirestore firestoreInst = FirebaseFirestore.instance;
@@ -18,6 +20,14 @@ class FirebaseProvider {
     return documentData;
   }
 
+Future<bool> addNewQuotation(QuotationModel quotation) async {
+    try {
+      await firestoreInst.collection('Quotation').add(quotation.toMap());
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
   Future<bool> addNewTender(Tender tender) async {
     try {
       await firestoreInst.collection('AddTender').add(tender.toMap());

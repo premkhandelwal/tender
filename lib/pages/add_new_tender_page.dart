@@ -60,21 +60,6 @@ class _AddNewTenderPageState extends State<AddNewTenderPage> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AddTenderBloc, AddTenderState>(
-      /* bloc: addTenderBloc,
-      listenWhen: (previous, current) {
-        if (current is AddTenderActionState) {
-          return true;
-        } else {
-          return false;
-        }
-      },
-      buildWhen: (previous, current) {
-        if (current is! AddTenderActionState) {
-          return true;
-        } else {
-          return false;
-        }
-      }, */
       listener: (context, state) {
         if (state is AddImageSuccessState) {
           url = state.imgUrl;
@@ -376,10 +361,6 @@ class _AddNewTenderPageState extends State<AddNewTenderPage> {
                               productQuantity--;
                               addTenderBloc.add(ProductQuantityChange(
                                   prodQty: productQuantity));
-                              // productQuantity != 1
-                              //     ? productQuantity--
-                              //     : productQuantity;
-                              // setState(() {});
                             },
                             child: SizedBox(
                               height: 21,
@@ -529,8 +510,6 @@ class _AddNewTenderPageState extends State<AddNewTenderPage> {
                                     Text('Please fill all the required fields'),
                               );
 
-// Find the ScaffoldMessenger in the widget tree
-// and use it to show a SnackBar.
                               ScaffoldMessenger.of(context)
                                   .showSnackBar(snackBar);
                             }

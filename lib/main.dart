@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vender/firebase_options.dart';
 import 'package:provider/provider.dart';
+import 'package:vender/logic/addQuotationBloc/bloc/add_quotation_bloc.dart';
 import 'package:vender/logic/bloc/AddTenderBloc/add_tender_bloc.dart';
 import 'package:vender/logic/providers/firebase_provider.dart';
 import 'package:vender/pages/Quotation.dart';
@@ -33,6 +34,10 @@ class MyApp extends StatelessWidget {
           BlocProvider(
             create: (context) =>
                 AddTenderBloc(firebaseProvider: FirebaseProvider()),
+          ),
+           BlocProvider(
+            create: (context) =>
+                AddQuotationBloc(firebaseProvider: FirebaseProvider()),
           ),
         ],
         child: ChangeNotifierProvider(
