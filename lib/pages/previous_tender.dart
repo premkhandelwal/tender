@@ -3,6 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:vender/logic/bloc/AddTenderBloc/add_tender_bloc.dart';
 import 'package:vender/pages/quotation.dart';
 import 'package:vender/widgets/item_widget.dart';
@@ -17,8 +18,7 @@ class previousTender extends StatefulWidget {
 class _previousTenderState extends State<previousTender> {
   String? imgUrl;
 
-  CollectionReference tenders =
-      FirebaseFirestore.instance.collection('AddTender');
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AddTenderBloc, AddTenderState>(
@@ -48,7 +48,16 @@ class _previousTenderState extends State<previousTender> {
             ),
           );
         }
-        return Text("No Previous Tenders found");
+        return Center(
+          child: Text(
+            "No Previous Tenders found",
+            style: GoogleFonts.poppins(
+              fontWeight: FontWeight.w500,
+              fontSize: 18,
+              color: const Color(0xff8C33C1),
+            ),
+          ),
+        );
       },
     );
   }

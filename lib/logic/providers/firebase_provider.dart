@@ -14,13 +14,14 @@ class FirebaseProvider {
   Future<List<Map<String, dynamic>>> fetchPreviousTenders() async {
     QuerySnapshot<Map<String, dynamic>> data =
         await firestoreInst.collection('AddTender').get();
+    print('__data ${data}');
     List<Map<String, dynamic>> documentData =
         data.docs.map((e) => e.data()).toList();
 
     return documentData;
   }
 
-Future<bool> addNewQuotation(QuotationModel quotation) async {
+  Future<bool> addNewQuotation(QuotationModel quotation) async {
     try {
       await firestoreInst.collection('Quotation').add(quotation.toMap());
       return true;
@@ -28,6 +29,7 @@ Future<bool> addNewQuotation(QuotationModel quotation) async {
       return false;
     }
   }
+
   Future<bool> addNewTender(Tender tender) async {
     try {
       await firestoreInst.collection('AddTender').add(tender.toMap());

@@ -5,8 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:vender/logic/addQuotationBloc/bloc/add_quotation_bloc.dart';
 import 'package:vender/models/quotationModel.dart';
+
+import '../logic/bloc/addQuotationBloc/bloc/add_quotation_bloc.dart';
 
 class Quotation extends StatefulWidget {
   String productname = "";
@@ -52,12 +53,7 @@ class _QuotationState extends State<Quotation> {
   Widget build(BuildContext context) {
     return BlocConsumer<AddQuotationBloc, AddQuotationState>(
       listener: (context, state) {
-        //  if (state is FetchTenderFailureState) {
-        //   const snackBar = SnackBar(
-        //     content: Text('Failed to submit tender'),
-        //   );
-        //   ScaffoldMessenger.of(context).showSnackBar(snackBar);
-        // }
+       
         // if (state is AddTenderSuccessState) {
         //   const snackBar = SnackBar(
         //     content: Text('Successfully added'),

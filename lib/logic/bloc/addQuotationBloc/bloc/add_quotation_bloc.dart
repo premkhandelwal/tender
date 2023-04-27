@@ -17,13 +17,14 @@ class AddQuotationBloc extends Bloc<AddQuotationEvent, AddQuotationState> {
   }
 
   FutureOr<void> addNewQuotation(
-      AddQuotationEvent event, Emitter<AddQuotationState> emit) async {
-    // emit(AddTenderInProgressState());
-    // bool tenderDataSuccess = await firebaseProvider.addNewQuotation(event.quotation);
-    // if (tenderDataSuccess) {
-    //   emit(AddTenderSuccessState());
-    // } else {
-    //   emit(AddTenderFailureState());
-    // }
+      AddQuotation event, Emitter<AddQuotationState> emit) async {
+    emit(AddQuotationInProgressState());
+    bool quotationDataSuccess =
+        await firebaseProvider.addNewQuotation(event.quotation);
+    if (quotationDataSuccess) {
+      emit(AddQuotationSuccessState());
+    } else {
+      emit(AddQuotationFailureState());
+    }
   }
 }

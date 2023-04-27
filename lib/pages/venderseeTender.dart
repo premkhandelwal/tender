@@ -13,10 +13,20 @@ class SeeTender extends StatelessWidget {
     return Scaffold(
         body: SingleChildScrollView(
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        const SizedBox(
+          height: 30,
+        ),
         previousTender(isVender: true),
-        Text(
-          'previous quotation',
-          style: GoogleFonts.poppins(),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Text(
+            'Previous Quotation',
+            style: GoogleFonts.poppins(
+              fontWeight: FontWeight.w500,
+              fontSize: 18,
+              color: const Color(0xff8C33C1),
+            ),
+          ),
         ),
         previousQuotations()
       ]),
@@ -65,7 +75,7 @@ class _previousQuotationsState extends State<previousQuotations> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) => Quotation(
-                                              fromPreviousQuotation: true,
+                                                  fromPreviousQuotation: true,
                                                   productCategory: "Food",
                                                   productQuantity:
                                                       data['quantity'],
