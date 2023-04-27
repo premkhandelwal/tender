@@ -28,6 +28,9 @@ class SeeTender extends StatelessWidget {
           ),
         ),
         previousTender(isVender: true),
+        const SizedBox(
+          height: 20,
+        ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Text(
@@ -39,7 +42,10 @@ class SeeTender extends StatelessWidget {
             ),
           ),
         ),
-        previousQuotations()
+        previousQuotations(),
+        const SizedBox(
+          height: 50,
+        ),
       ]),
     ));
   }
@@ -61,75 +67,68 @@ class _previousQuotationsState extends State<previousQuotations> {
         builder: (BuildContext context, snapshot) {
           return snapshot.connectionState == ConnectionState.waiting
               ? const CircularProgressIndicator()
-              : SizedBox(
-                  height: MediaQuery.of(context).size.height / 1.52,
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: snapshot.data?.docs.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            DocumentSnapshot data = snapshot.data!.docs[index];
+              : SingleChildScrollView(
+                  child: ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: snapshot.data?.docs.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      DocumentSnapshot data = snapshot.data!.docs[index];
 
-                            return Card(
-                              color: const Color(0xffe4d3e8),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20.0)),
-                              child: Container(
-                                alignment: Alignment.center,
-                                height: MediaQuery.of(context).size.height / 9,
-                                child: ListTile(
-                                  trailing: Text(data['price'] + ' rs'),
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => Quotation(
-                                                  fromPreviousQuotation: true,
-                                                  productCategory: "Food",
-                                                  productQuantity:
-                                                      data['quantity'],
-                                                  productname: data['name'],
-                                                  productimage: data['image'],
-                                                )));
-                                  },
-                                  leading: ConstrainedBox(
-                                    constraints: const BoxConstraints(
-                                      minWidth: 66,
-                                      minHeight: 64,
-                                      maxWidth: 66,
-                                      maxHeight: 64,
-                                    ),
-                                    child: data['image'] == null
-                                        ? Container()
-                                        : Image.network(
-                                            data['image'],
-                                          ),
-                                  ),
-                                  title: Text(
-                                    data['name'],
-                                    style: GoogleFonts.ubuntu(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w400,
-                                      color: const Color(0xff8C33C1),
-                                    ),
-                                  ),
-                                  subtitle: Text(
-                                    "Qty: ${data['quantity']}\nCategory: ${data['category']}",
-                                    style: GoogleFonts.ubuntu(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w400,
-                                      color: Color(0xff8C33C1),
-                                    ),
-                                  ),
-                                ),
+                      return Card(
+                        color: const Color(0xffe4d3e8),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0)),
+                        child: Container(
+                          alignment: Alignment.center,
+                          height: MediaQuery.of(context).size.height / 9,
+                          child: ListTile(
+                            trailing: Text(data['price'] + ' rs'),
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => Quotation(
+                                            fromPreviousQuotation: true,
+                                            productCategory: "Food",
+                                            productQuantity: data['quantity'],
+                                            productname: data['name'],
+                                            productimage: data['image'],
+                                          )));
+                            },
+                            leading: ConstrainedBox(
+                              constraints: const BoxConstraints(
+                                minWidth: 66,
+                                minHeight: 64,
+                                maxWidth: 66,
+                                maxHeight: 64,
                               ),
-                            );
-                          },
+                              child: data['image'] == null
+                                  ? Container()
+                                  : Image.network(
+                                      data['image'],
+                                    ),
+                            ),
+                            title: Text(
+                              data['name'],
+                              style: GoogleFonts.ubuntu(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w400,
+                                color: const Color(0xff8C33C1),
+                              ),
+                            ),
+                            subtitle: Text(
+                              "Qty: ${data['quantity']}\nCategory: ${data['category']}",
+                              style: GoogleFonts.ubuntu(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w400,
+                                color: const Color(0xFF8C33C1),
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                    ],
+                      );
+                    },
                   ),
                 );
         });

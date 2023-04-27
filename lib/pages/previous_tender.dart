@@ -33,25 +33,19 @@ class _previousTenderState extends State<previousTender> {
           return Center(child: CircularProgressIndicator());
         }
         if (state is FetchTenderSuccessState) {
-          return Container(
-            height: MediaQuery.of(context).size.height / 1.52,
-            child: Column(
-              children: [
-                Expanded(
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: state.tenderData.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      Map<String, dynamic> data = state.tenderData[index];
+          return SingleChildScrollView(
+            child: ListView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: state.tenderData.length,
+              itemBuilder: (BuildContext context, int index) {
+                Map<String, dynamic> data = state.tenderData[index];
 
-                      return ItemWidget(
-                        data: data,
-                        isVender: widget.isVender,
-                      );
-                    },
-                  ),
-                ),
-              ],
+                return ItemWidget(
+                  data: data,
+                  isVender: widget.isVender,
+                );
+              },
             ),
           );
         }
