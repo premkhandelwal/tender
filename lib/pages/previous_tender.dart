@@ -17,7 +17,13 @@ class previousTender extends StatefulWidget {
 
 class _previousTenderState extends State<previousTender> {
   String? imgUrl;
-
+  late AddTenderBloc addTenderBloc;
+  @override
+  void initState() {
+    super.initState();
+    addTenderBloc = BlocProvider.of<AddTenderBloc>(context);
+    addTenderBloc.add(FetchPreviousTenders());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +39,7 @@ class _previousTenderState extends State<previousTender> {
               children: [
                 Expanded(
                   child: ListView.builder(
+                    shrinkWrap: true,
                     itemCount: state.tenderData.length,
                     itemBuilder: (BuildContext context, int index) {
                       Map<String, dynamic> data = state.tenderData[index];

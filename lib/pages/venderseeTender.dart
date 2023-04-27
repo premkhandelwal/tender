@@ -14,7 +14,18 @@ class SeeTender extends StatelessWidget {
         body: SingleChildScrollView(
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         const SizedBox(
-          height: 30,
+          height: 50,
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Text(
+            'Tenders',
+            style: GoogleFonts.poppins(
+              fontWeight: FontWeight.w500,
+              fontSize: 18,
+              color: const Color(0xff8C33C1),
+            ),
+          ),
         ),
         previousTender(isVender: true),
         Padding(
