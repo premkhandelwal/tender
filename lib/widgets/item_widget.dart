@@ -28,10 +28,11 @@ class ItemWidget extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                       builder: (context) => Quotation(
+                            fromPreviousQuotation: false,
                             productCategory: data['category'],
                             productQuantity: data['quantity'],
                             productname: data['name'],
-                            productimage: data['image'],
+                            productimage: data['imgUrl'],
                           )));
             }
           },
@@ -42,10 +43,10 @@ class ItemWidget extends StatelessWidget {
               maxWidth: 66,
               maxHeight: 64,
             ),
-            child: data['image'] == null
+            child: data['imgUrl'] == null
                 ? Container()
                 : Image.network(
-                    data['image'],
+                    data['imgUrl'],
                   ),
           ),
           title: Text(
@@ -61,7 +62,7 @@ class ItemWidget extends StatelessWidget {
             style: GoogleFonts.ubuntu(
               fontSize: 15,
               fontWeight: FontWeight.w400,
-              color: Color(0xff8C33C1),
+              color:const  Color(0xff8C33C1),
             ),
           ),
         ),
