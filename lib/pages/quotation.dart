@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vender/models/quotationModel.dart';
 
+import '../constants.dart';
 import '../logic/bloc/addQuotationBloc/bloc/add_quotation_bloc.dart';
 
 class Quotation extends StatefulWidget {
@@ -53,7 +54,6 @@ class _QuotationState extends State<Quotation> {
   Widget build(BuildContext context) {
     return BlocConsumer<AddQuotationBloc, AddQuotationState>(
       listener: (context, state) {
-       
         // if (state is AddTenderSuccessState) {
         //   const snackBar = SnackBar(
         //     content: Text('Successfully added'),
@@ -530,27 +530,42 @@ class _QuotationState extends State<Quotation> {
                           child: InkWell(
                             onTap: () {
                               if (priceEditingController.text.isNotEmpty) {
-                                // Map<String, dynamic> addQuotation = {
-                                //   "name": widget.productname,
-                                //   "image": widget.productimage,
-                                //   "category": widget.productCategory,
-                                //   "quantity": widget.productQuantity,
-                                //   "price": priceEditingController.text,
-                                // };
-                                // print('AddQuotation Body ${addQuotation}');
-                                // FirebaseFirestore.instance
-                                //     .collection('Quotations')
-                                //     .add(addQuotation)
-                                //     .then((value) {
-                                //   Navigator.pop(context);
-                                // });
-                                addQuotationBloc.add(AddQuotation(
-                                    quotation: QuotationModel(
-                                        name: widget.productname,
-                                        imgUrl: widget.productimage,
-                                        category: widget.productCategory,
-                                        quantity: widget.productQuantity,
-                                        price: priceEditingController.text)));
+                                Map<String, dynamic> addQuotation = {
+                                  "name": widget.productname,
+                                  "image": widget.productimage,
+                                  "category": widget.productCategory,
+                                  "quantity": widget.productQuantity,
+                                  "price": priceEditingController.text,
+                                  "googleId": userGoogleId
+                                };
+                                print('AddQuotation Body ${userGoogleId}');
+                                Map<String, dynamic> addvenderSeentender = {
+                                  "productName": widget.productname,
+                                  "vendorId": userGoogleId,
+                                  "image": widget.productimage,
+                                  "category": widget.productCategory,
+                                  "quantity": widget.productQuantity,
+                                  "price": priceEditingController.text,
+                                };
+                                FirebaseFirestore.instance
+                                    .collection('VendorSeenTender')
+                                    .add(addvenderSeentender)
+                                    .then((value) {
+                                  FirebaseFirestore.instance
+                                      .collection('Quotations')
+                                      .add(addQuotation)
+                                      .then((value) {
+                                    Navigator.pop(context);
+                                  });
+                                });
+
+                                // addQuotationBloc.add(AddQuotation(
+                                //     quotation: QuotationModel(
+                                //         name: widget.productname,
+                                //         imgUrl: widget.productimage,
+                                //         category: widget.productCategory,
+                                //         quantity: widget.productQuantity,
+                                //         price: priceEditingController.text)));
                               } else {
                                 const snackBar = SnackBar(
                                   content: Text('Fill the price'),
