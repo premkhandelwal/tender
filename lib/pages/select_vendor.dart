@@ -76,17 +76,10 @@ class SelectVendor extends StatelessWidget {
                             width: MediaQuery.of(context).size.width / 1.45,
                             child: ElevatedButton.icon(
                                 onPressed: () async {
-                                  // Obtain shared preferences.
-                                  final SharedPreferences prefs =
-                                      await SharedPreferences.getInstance();
-
-                                  await prefs.setBool('isVendor', true);
-                                  // ignore: use_build_context_synchronously
                                   FirebaseFirestore.instance
                                       .collection('User')
                                       .doc('$userDocId')
-                                      .update({'type': 'vendor'}).then(
-                                          (value) {
+                                      .update({'type': 'vendor'}).then((value) {
                                     Navigator.pushReplacementNamed(
                                         context, MyRoutes.venderDashBoardRoute);
                                   });
@@ -148,11 +141,6 @@ class SelectVendor extends StatelessWidget {
                             width: MediaQuery.of(context).size.width / 1.45,
                             child: ElevatedButton.icon(
                               onPressed: () async {
-                                final SharedPreferences prefs =
-                                    await SharedPreferences.getInstance();
-
-                                await prefs.setBool('isCustomer', true);
-
                                 print('doc1 ${userDocId}');
                                 FirebaseFirestore.instance
                                     .collection('User')

@@ -6,14 +6,15 @@ import 'package:vender/pages/Quotation.dart';
 
 class ItemWidget extends StatelessWidget {
   final bool isVender;
-  const ItemWidget({
+  String id;
+  ItemWidget({
     super.key,
+    required this.id,
     required this.data,
     required this.isVender,
   });
 
-  final Map<String, dynamic> data;
-
+  final DocumentSnapshot<Object?> data;
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -29,6 +30,7 @@ class ItemWidget extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                       builder: (context) => Quotation(
+                            addTenderDocID: id,
                             fromPreviousQuotation: false,
                             productCategory: data['category'],
                             productQuantity: data['quantity'],

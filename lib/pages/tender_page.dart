@@ -27,7 +27,7 @@ class _TenderPageState extends State<TenderPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: Container(
+        body: SingleChildScrollView(
           child: Column(
             children: [
               Stack(

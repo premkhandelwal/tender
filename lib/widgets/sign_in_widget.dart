@@ -129,21 +129,12 @@ class SignInWidget extends StatelessWidget {
                                 userGoogleId = value.credential!.accessToken!;
                                 userDocId = value.user!.uid;
                               }).then((value) {
-                                if (prefs.getBool('isVendor') ?? false) {
-                                  Navigator.pushReplacementNamed(
-                                      context, MyRoutes.venderDashBoardRoute);
-                                } else if (prefs.getBool('isCustomer') ??
-                                    false) {
-                                  Navigator.pushNamed(
-                                      context, MyRoutes.customerDashboardRoute);
-                                } else {
-                                  Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => SelectVendor(
-                                                userDocId: userDocId,
-                                              )));
-                                }
+                                Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => SelectVendor(
+                                              userDocId: userDocId,
+                                            )));
                               });
                             },
                           ),

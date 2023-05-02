@@ -1,6 +1,7 @@
 // ignore_for_file: camel_case_types,prefer_const_literals_to_create_immutables, prefer_const_constructors, sized_box_for_whitespace, avoid_unnecessary_containers
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,7 +13,8 @@ import '../constants.dart';
 import '../logic/bloc/addQuotationBloc/bloc/add_quotation_bloc.dart';
 
 class Quotation extends StatefulWidget {
-  String productname = "";
+  String? productname = "";
+  String? addTenderDocID;
   int productQuantity = 1;
   String productCategory = "";
   String productimage = "";
@@ -20,8 +22,9 @@ class Quotation extends StatefulWidget {
   Quotation(
       {this.productCategory = "",
       this.productQuantity = 1,
-      this.productname = "",
       this.productimage = "",
+      this.addTenderDocID,
+      this.productname,
       this.fromPreviousQuotation});
 
   @override
@@ -529,32 +532,46 @@ class _QuotationState extends State<Quotation> {
                               left: MediaQuery.of(context).size.width / 3.8,
                               right: MediaQuery.of(context).size.width / 3.8),
                           child: InkWell(
-                            onTap: () {
+                            onTap: () async {
+                              var token = await FirebaseAuth
+                                  .instance.currentUser!
+                                  .getIdToken();
                               if (priceEditingController.text.isNotEmpty) {
-                                Map<String, dynamic> addQuotation = {
+                                Map<String, dynamic> addTender = {
                                   "name": widget.productname,
-                                  "image": widget.productimage,
+                                  "imageUrl": widget.productimage,
                                   "category": widget.productCategory,
                                   "quantity": widget.productQuantity,
-                                  "price": priceEditingController.text,
-                                  "googleId": userGoogleId
+                                  "quotes": FieldValue.arrayUnion([
+                                    {
+                                      "googleIofVendor": token,
+                                    }
+                                  ])
                                 };
-                                print('AddQuotation Body ${userGoogleId}');
-                                Map<String, dynamic> addvenderSeentender = {
-                                  "productName": widget.productname,
-                                  "vendorId": userGoogleId,
-                                  "image": widget.productimage,
-                                  "category": widget.productCategory,
-                                  "quantity": widget.productQuantity,
-                                  "price": priceEditingController.text,
-                                };
+                                // print('addTender Body ${addTender}');
                                 FirebaseFirestore.instance
-                                    .collection("User")
-                                    .doc(FirebaseAuth.instance.currentUser!.uid)
-                                    .collection('QuotationAdded')
-                                    .add(addvenderSeentender)
+                                    .collection('AddTender')
+                                    .doc(widget.addTenderDocID)
+                                    .update(addTender)
                                     .then((value) {
-                                  Navigator.pop(context);
+                                  Map<String, dynamic> addQuotation = {
+                                    "productName": widget.productname,
+                                    "image": widget.productimage,
+                                    "category": widget.productCategory,
+                                    "quantity": widget.productQuantity,
+                                    "price": priceEditingController.text,
+                                    "vendorId": token
+                                  };
+
+                                  FirebaseFirestore.instance
+                                      .collection("User")
+                                      .doc(FirebaseAuth
+                                          .instance.currentUser!.uid)
+                                      .collection('QuotationAdded')
+                                      .add(addQuotation)
+                                      .then((value) {
+                                    Navigator.pop(context);
+                                  });
                                 });
 
                                 // addQuotationBloc.add(AddQuotation(

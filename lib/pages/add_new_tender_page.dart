@@ -1,8 +1,10 @@
 // ignore_for_file: camel_case_types,prefer_const_literals_to_create_immutables, prefer_const_constructors, sized_box_for_whitespace, avoid_unnecessary_containers
 
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -496,14 +498,34 @@ class _AddNewTenderPageState extends State<AddNewTenderPage> {
                           borderRadius: BorderRadius.all(Radius.circular(10)),
                         ),
                         child: InkWell(
-                          onTap: () {
+                          onTap: () async {
+                            var token = await FirebaseAuth.instance.currentUser!
+                                .getIdToken();
                             if (url != null && dropdownvalue != null) {
-                              addTenderBloc.add(AddNewTender(
-                                  tender: Tender(
-                                      name: nameEditingController.text,
-                                      imgUrl: url!,
-                                      category: dropdownvalue,
-                                      quantity: productQuantity)));
+                              Map<String, dynamic> addTender = {
+                                "name": nameEditingController.text,
+                                "imageUrl": url,
+                                "category": dropdownvalue,
+                                "quantity": productQuantity,
+                                "quotes": FieldValue.arrayUnion([
+                                  {
+                                    "googleIdofCustomer": token,
+                                  }
+                                ])
+                              };
+                              // print('addTender Body ${addTender}');
+                              FirebaseFirestore.instance
+                                  .collection('AddTender')
+                                  .add(addTender)
+                                  .then((value) {
+                                Navigator.pop(context);
+                              });
+                              // addTenderBloc.add(AddNewTender(
+                              //     tender: Tender(
+                              //         name: nameEditingController.text,
+                              //         imgUrl: url!,
+                              //         category: dropdownvalue,
+                              //         quantity: productQuantity)));
                             } else {
                               const snackBar = SnackBar(
                                 content:

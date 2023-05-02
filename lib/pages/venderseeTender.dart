@@ -95,6 +95,8 @@ class _previousQuotationsState extends State<previousQuotations> {
                     itemCount: snapshot.data?.docs.length,
                     itemBuilder: (BuildContext context, int index) {
                       DocumentSnapshot data = snapshot.data!.docs[index];
+                      print(snapshot.data!.docs[index].reference.id);
+
                       return Card(
                         color: const Color(0xffe4d3e8),
                         shape: RoundedRectangleBorder(
