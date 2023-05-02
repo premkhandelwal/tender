@@ -1,5 +1,6 @@
 // ignore_for_file: camel_case_types,prefer_const_literals_to_create_immutables, prefer_const_constructors, sized_box_for_whitespace, avoid_unnecessary_containers
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -548,15 +549,12 @@ class _QuotationState extends State<Quotation> {
                                   "price": priceEditingController.text,
                                 };
                                 FirebaseFirestore.instance
-                                    .collection('VendorSeenTender')
+                                    .collection("User")
+                                    .doc(FirebaseAuth.instance.currentUser!.uid)
+                                    .collection('QuotationAdded')
                                     .add(addvenderSeentender)
                                     .then((value) {
-                                  FirebaseFirestore.instance
-                                      .collection('Quotations')
-                                      .add(addQuotation)
-                                      .then((value) {
-                                    Navigator.pop(context);
-                                  });
+                                  Navigator.pop(context);
                                 });
 
                                 // addQuotationBloc.add(AddQuotation(
