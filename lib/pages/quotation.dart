@@ -544,7 +544,7 @@ class _QuotationState extends State<Quotation> {
                                   "quantity": widget.productQuantity,
                                   "quotes": FieldValue.arrayUnion([
                                     {
-                                      "googleIofVendor": token,
+                                      "googleIdofVendor": token,
                                     }
                                   ])
                                 };

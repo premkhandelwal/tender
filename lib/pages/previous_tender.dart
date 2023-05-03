@@ -19,23 +19,26 @@ class previousTender extends StatefulWidget {
 class _previousTenderState extends State<previousTender> {
   String? imgUrl;
   late AddTenderBloc addTenderBloc;
-
+  var token;
   @override
   void initState() {
     super.initState();
     addTenderBloc = BlocProvider.of<AddTenderBloc>(context);
     addTenderBloc.add(FetchPreviousTenders());
+    FirebaseAuth.instance.currentUser!.getIdToken().then((value) {
+      token = value;
+      print('token $token');
+    });
   }
 
-  Future<bool> isNotshow(List quotes) async {
-    var token = await FirebaseAuth.instance.currentUser!.getIdToken();
+  bool isNotshow(List quotes) {
     for (int i = 0; i < quotes.length; i++) {
-      if (quotes[i]['googleIdofvendor'] == token ||
+      if (quotes[i]['googleIdofVendor'] == token ||
           quotes[i]['googleIdofCustomer'] == token) {
-        return true;
+        return false;
       }
     }
-    return false;
+    return true;
   }
 
   @override
@@ -47,33 +50,30 @@ class _previousTenderState extends State<previousTender> {
               ? const CircularProgressIndicator()
               : SingleChildScrollView(
                   child: ListView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: snapshot.data?.docs.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      DocumentSnapshot data = snapshot.data!.docs[index];
-                      print(snapshot.data!.docs[index].reference.id);
-                      // if (widget.isVender) {
-                      //   print(data['quotes']);
-                      //   if (await isNotshow(data['quotes'])) {
-                      //     return ItemWidget(
-                      //       id: data.reference.id,
-                      //       data: data,
-                      //       isVender: widget.isVender,
-                      //     );
-                      //   } else {
-                      //     Container();
-                      //   }
-                      // } else
-                       {
-                        return ItemWidget(
-                          id: data.reference.id,
-                          data: data,
-                          isVender: widget.isVender,
-                        );
-                      }
-                    },
-                  ),
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: snapshot.data?.docs.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        DocumentSnapshot data = snapshot.data!.docs[index];
+                        if (widget.isVender) {
+                          print('data  ${isNotshow(data['quotes'])}');
+                          if (isNotshow(data['quotes'])) {
+                            return ItemWidget(
+                              id: data.reference.id,
+                              data: data,
+                              isVender: widget.isVender,
+                            );
+                          } else {
+                            Container();
+                          }
+                        } else {
+                          return ItemWidget(
+                            id: data.reference.id,
+                            data: data,
+                            isVender: widget.isVender,
+                          );
+                        }
+                      }),
                 );
         });
   }

@@ -504,12 +504,13 @@ class _AddNewTenderPageState extends State<AddNewTenderPage> {
                             if (url != null && dropdownvalue != null) {
                               Map<String, dynamic> addTender = {
                                 "name": nameEditingController.text,
-                                "imageUrl": url,
+                                "imgUrl": url,
                                 "category": dropdownvalue,
                                 "quantity": productQuantity,
                                 "quotes": FieldValue.arrayUnion([
                                   {
-                                    "googleIdofCustomer": token,
+                                    "googleIdofCustomer":
+                                       token,
                                   }
                                 ])
                               };
