@@ -514,7 +514,6 @@ class _AddNewTenderPageState extends State<AddNewTenderPage> {
                                   }
                                 ])
                               };
-                              // print('addTender Body ${addTender}');
                               FirebaseFirestore.instance
                                   .collection('AddTender')
                                   .add(addTender)

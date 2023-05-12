@@ -1,7 +1,6 @@
 // ignore_for_file: prefer_const_constructors, avoid_unnecessary_containers, unnecessary_new
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -9,10 +8,27 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vender/constants.dart';
 import 'package:vender/pages/select_vendor.dart';
 import 'package:vender/provider/google_sign_in_provider.dart';
-import 'package:vender/routes/routes.dart';
+
+import '../routes/routes.dart';
 
 class SignInWidget extends StatelessWidget {
   const SignInWidget({super.key});
+  Future<String> navigateToInitialScreen() async {
+    if (FirebaseAuth.instance.currentUser != null) {
+      var collection = FirebaseFirestore.instance.collection('User');
+      var docSnapshot =
+          await collection.doc(FirebaseAuth.instance.currentUser!.uid).get();
+      var data = docSnapshot.data();
+      print('data ${data} ');
+      if (data == null) {
+        return '';
+      } else {
+        return data['type'];
+      }
+    } else {
+      return 'signIn';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -129,12 +145,35 @@ class SignInWidget extends StatelessWidget {
                                 userGoogleId = value.credential!.accessToken!;
                                 userDocId = value.user!.uid;
                               }).then((value) {
-                                Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => SelectVendor(
-                                              userDocId: userDocId,
-                                            )));
+                                navigateToInitialScreen().then((value) {
+                                  print('value $value');
+                                  if (value == 'vendor') {
+                                    Navigator.pushReplacementNamed(
+                                        context, MyRoutes.venderDashBoardRoute);
+                                  }
+                                  if (value == 'customer') {
+                                    Navigator.pushReplacementNamed(context,
+                                        MyRoutes.customerDashboardRoute);
+                                  }
+                                  if (value == '') {
+                                    Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => SelectVendor(
+                                                  userDocId: FirebaseAuth
+                                                      .instance
+                                                      .currentUser!
+                                                      .uid,
+                                                )));
+                                  }
+                                  if (value == 'signIn') {
+                                    Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const SignInWidget()));
+                                  }
+                                });
                               });
                             },
                           ),

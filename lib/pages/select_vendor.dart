@@ -141,7 +141,6 @@ class SelectVendor extends StatelessWidget {
                             width: MediaQuery.of(context).size.width / 1.45,
                             child: ElevatedButton.icon(
                               onPressed: () async {
-                                print('doc1 ${userDocId}');
                                 FirebaseFirestore.instance
                                     .collection('User')
                                     .doc('$userDocId')

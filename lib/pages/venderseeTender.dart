@@ -75,8 +75,7 @@ class previousQuotations extends StatefulWidget {
 
 class _previousQuotationsState extends State<previousQuotations> {
   String? imgUrl;
-  CollectionReference quotations =
-      FirebaseFirestore.instance.collection('Quotations');
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(

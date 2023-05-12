@@ -30,10 +30,12 @@
 //     );
 //   }
 // }
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vender/pages/select_vendor.dart';
 import 'package:vender/widgets/sign_in_widget.dart';
 
 import '../routes/routes.dart';
@@ -48,48 +50,54 @@ class LoginPage extends StatefulWidget {
 }
 
 class _InitialScreenState extends State<LoginPage> {
-  void navigateToInitialScreen() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    print('yes ${prefs.getBool('isCustomer')}');
-
+  Future<String> navigateToInitialScreen() async {
     if (FirebaseAuth.instance.currentUser != null) {
-      if (prefs.getBool('isCustomer') ?? false) {
-        print('yes 1');
-
-        // ignore: use_build_context_synchronously
-        Navigator.pushReplacementNamed(
-            context, MyRoutes.customerDashboardRoute);
-      } else if (prefs.getBool('isVendor') ?? false) {
-        print('yes 2');
-
-        // ignore: use_build_context_synchronously
-        Navigator.pushReplacementNamed(context, MyRoutes.venderDashBoardRoute);
-      }else{
-        print('yes 3');
-
-        // ignore: use_build_context_synchronously
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => SignInWidget()));
+      var collection = FirebaseFirestore.instance.collection('User');
+      var docSnapshot =
+          await collection.doc(FirebaseAuth.instance.currentUser!.uid).get();
+      var data = docSnapshot.data();
+      print('data ${data} ');
+      if (data == null) {
+        return '';
+      } else {
+        return data['type'];
       }
     } else {
-      print('yes 3');
-
-      // ignore: use_build_context_synchronously
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => SignInWidget()));
+      return 'signIn';
     }
   }
 
   @override
   void initState() {
     super.initState();
-
-    navigateToInitialScreen();
+    navigateToInitialScreen().then((value) {
+      print('value $value');
+      if (value == 'vendor') {
+        Navigator.pushReplacementNamed(context, MyRoutes.venderDashBoardRoute);
+         Navigator.pushReplacementNamed(
+            context, MyRoutes.customerDashboardRoute);
+      }
+      if (value == 'customer') {
+        Navigator.pushReplacementNamed(
+            context, MyRoutes.customerDashboardRoute);
+      }
+      if (value == '') {
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => SelectVendor(
+                      userDocId: FirebaseAuth.instance.currentUser!.uid,
+                    )));
+      }
+      if (value == 'signIn') {
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => const SignInWidget()));
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold();
   }
 }
