@@ -1,8 +1,5 @@
 // ignore_for_file: camel_case_types,prefer_const_literals_to_create_immutables, prefer_const_constructors, sized_box_for_whitespace, avoid_unnecessary_containers
-
-import 'dart:developer';
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -501,7 +498,7 @@ class _AddNewTenderPageState extends State<AddNewTenderPage> {
                           onTap: () async {
                             var token = await FirebaseAuth.instance.currentUser!
                                 .getIdToken();
-                            if (url != null && dropdownvalue != null) {
+                            if (url != null) {
                               Map<String, dynamic> addTender = {
                                 "name": nameEditingController.text,
                                 "imgUrl": url,
@@ -509,17 +506,13 @@ class _AddNewTenderPageState extends State<AddNewTenderPage> {
                                 "quantity": productQuantity,
                                 "quotes": FieldValue.arrayUnion([
                                   {
-                                    "googleIdofCustomer":
-                                       token,
+                                    "googleIdofCustomer": token,
                                   }
                                 ])
                               };
-                              FirebaseFirestore.instance
-                                  .collection('AddTender')
-                                  .add(addTender)
-                                  .then((value) {
-                                Navigator.pop(context);
-                              });
+                              Tender tender = Tender.fromMap(addTender);
+                              addTenderBloc.add(AddNewTender(tender: tender));
+                              
                               // addTenderBloc.add(AddNewTender(
                               //     tender: Tender(
                               //         name: nameEditingController.text,

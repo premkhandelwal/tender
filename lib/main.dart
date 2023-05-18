@@ -15,6 +15,7 @@ import 'package:vender/pages/previous_tender.dart';
 import 'package:vender/pages/select_vendor.dart';
 import 'package:vender/pages/venderDashBoard.dart';
 import 'package:vender/provider/google_sign_in_provider.dart';
+import 'package:vender/provider/location_provider.dart';
 import 'package:vender/routes/routes.dart';
 
 void main() async {
@@ -29,33 +30,38 @@ class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) => MultiBlocProvider(
-        providers: [
-          BlocProvider(
-            create: (context) =>
-                AddTenderBloc(firebaseProvider: FirebaseProvider()),
-          ),
-           BlocProvider(
-            create: (context) =>
-                AddQuotationBloc(firebaseProvider: FirebaseProvider()),
-          ),
-        ],
-        child: ChangeNotifierProvider(
-          create: (context) => GoogleSignInProvider(),
-          child: MaterialApp(
-            debugShowCheckedModeBanner: false,
-            initialRoute: MyRoutes.loginRoute,
-            routes: {
-              MyRoutes.venderDashBoardRoute: (context) => VenderDashBoard(),
-              MyRoutes.loginRoute: (context) => LoginPage(),
-              MyRoutes.selectVendorRoute: (context) => SelectVendor(),
-              MyRoutes.customerDashboardRoute: (context) => CustomerDashbord(),
-              MyRoutes.tenderRoute: (context) => TenderPage(),
-              MyRoutes.addNewTenderRoute: (context) => AddNewTenderPage(),
-              MyRoutes.previousTenderRoute: (context) => previousTender(),
-              MyRoutes.quotationRoute: (context) => Quotation(),
-            },
-          ),
+  Widget build(BuildContext context) {
+    getCurrentPosition(context);
+
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) =>
+              AddTenderBloc(firebaseProvider: FirebaseProvider()),
         ),
-      );
+        BlocProvider(
+          create: (context) =>
+              AddQuotationBloc(firebaseProvider: FirebaseProvider()),
+        ),
+      ],
+      child: ChangeNotifierProvider(
+        create: (context) => GoogleSignInProvider(),
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          initialRoute: MyRoutes.loginRoute,
+          routes: {
+            MyRoutes.venderDashBoardRoute: (context) => const VenderDashBoard(),
+            MyRoutes.loginRoute: (context) => const LoginPage(),
+            MyRoutes.selectVendorRoute: (context) => SelectVendor(),
+            MyRoutes.customerDashboardRoute: (context) =>
+                const CustomerDashbord(),
+            MyRoutes.tenderRoute: (context) => const TenderPage(),
+            MyRoutes.addNewTenderRoute: (context) => const AddNewTenderPage(),
+            MyRoutes.previousTenderRoute: (context) => previousTender(),
+            MyRoutes.quotationRoute: (context) => Quotation(),
+          },
+        ),
+      ),
+    );
+  }
 }

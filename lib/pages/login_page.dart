@@ -35,6 +35,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vender/constants.dart';
+import 'package:vender/models/user.dart';
 import 'package:vender/pages/select_vendor.dart';
 import 'package:vender/widgets/sign_in_widget.dart';
 
@@ -60,6 +62,7 @@ class _InitialScreenState extends State<LoginPage> {
       if (data == null) {
         return '';
       } else {
+        loggedInUser = Users.fromMap(data);
         return data['type'];
       }
     } else {

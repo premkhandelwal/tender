@@ -44,7 +44,7 @@ class _previousTenderState extends State<previousTender> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('AddTender').snapshots(),
+        stream: FirebaseFirestore.instance.collection('QuotationAdded').snapshots(),
         builder: (BuildContext context, snapshot) {
           return snapshot.connectionState == ConnectionState.waiting
               ? const CircularProgressIndicator()

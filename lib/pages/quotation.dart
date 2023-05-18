@@ -571,6 +571,7 @@ class _QuotationState extends State<Quotation> {
                                       .add(addQuotation)
                                       .then((value) {
                                     Navigator.pop(context);
+                                    
                                   });
                                 });
 

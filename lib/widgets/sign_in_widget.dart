@@ -129,8 +129,12 @@ class SignInWidget extends StatelessWidget {
                                 Map<String, dynamic> userData = {
                                   "name": value.user!.displayName.toString(),
                                   "email": value.user!.email.toString(),
-                                  "google_id": value.credential!.accessToken,
-                                  'type': ''
+                                  "google_id": value.user!.uid,
+                                  'type': '',
+                                  'coordinates': [
+                                    currentPosition?.latitude,
+                                    currentPosition?.longitude
+                                  ]
                                 };
                                 final userRef = FirebaseFirestore.instance
                                     .collection("User")
