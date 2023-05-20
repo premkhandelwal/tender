@@ -1,12 +1,11 @@
-import 'dart:async';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:vender/constants.dart';
-import 'package:vender/pages/previous_tender.dart';
+
+import 'package:vender/logic/bloc/addQuotationBloc/add_quotation_bloc.dart';
+import 'package:vender/models/tender.dart';
+import 'package:vender/routes/arguments/quotation_screen_args.dart';
+import 'package:vender/routes/routes.dart';
 
 import 'Quotation.dart';
 
@@ -18,147 +17,156 @@ class SeeTender extends StatefulWidget {
 }
 
 class _SeeTenderState extends State<SeeTender> {
-  late StreamSubscription<DocumentSnapshot> isQuotationfilled;
-
+  late AddQuotationBloc addQuotationBloc;
   @override
   void initState() {
     super.initState();
+    addQuotationBloc = BlocProvider.of<AddQuotationBloc>(context);
+    addQuotationBloc.add(FetchTendersQuotation());
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: SingleChildScrollView(
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        const SizedBox(
-          height: 50,
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Text(
-            'Tenders',
-            style: GoogleFonts.poppins(
-              fontWeight: FontWeight.w500,
-              fontSize: 18,
-              color: const Color(0xff8C33C1),
+    List<Tender> currentTenders = [];
+    List<Tender> previousTenders = [];
+
+    return Scaffold(body: BlocBuilder<AddQuotationBloc, AddQuotationState>(
+        builder: (context, state) {
+      if (state is FetchTendersQuotationInProgressState) {
+        return const CircularProgressIndicator();
+      } else if (state is FetchTendersQuotationSuccessState) {
+        Map<String, List<Tender>> recivevedLists = state.tenderList;
+        previousTenders = recivevedLists["previous"]!;
+        currentTenders = recivevedLists["current"]!;
+        return SingleChildScrollView(
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            const SizedBox(
+              height: 50,
             ),
-          ),
-        ),
-        previousTender(isVender: true),
-        const SizedBox(
-          height: 20,
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Text(
-            'Previous Quotation',
-            style: GoogleFonts.poppins(
-              fontWeight: FontWeight.w500,
-              fontSize: 18,
-              color: const Color(0xff8C33C1),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                'Tenders',
+                style: GoogleFonts.poppins(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 18,
+                  color: const Color(0xff8C33C1),
+                ),
+              ),
             ),
-          ),
-        ),
-        previousQuotations(),
-        const SizedBox(
-          height: 50,
-        ),
-      ]),
-    ));
+            PreviousQuotations(
+              previousTenders: currentTenders,
+              fromPreviousQuotation: false,
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                'Previous Quotation',
+                style: GoogleFonts.poppins(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 18,
+                  color: const Color(0xff8C33C1),
+                ),
+              ),
+            ),
+            PreviousQuotations(
+                previousTenders: previousTenders, fromPreviousQuotation: true),
+            const SizedBox(
+              height: 50,
+            ),
+          ]),
+        );
+      }
+      return Text("No Tenders Found");
+    }));
   }
 }
 
-class previousQuotations extends StatefulWidget {
+class PreviousQuotations extends StatefulWidget {
+  final List<Tender> previousTenders;
+  final bool fromPreviousQuotation;
+  const PreviousQuotations({
+    Key? key,
+    required this.previousTenders,
+    required this.fromPreviousQuotation,
+  }) : super(key: key);
+
   @override
-  State<previousQuotations> createState() => _previousQuotationsState();
+  State<PreviousQuotations> createState() => _PreviousQuotationsState();
 }
 
-class _previousQuotationsState extends State<previousQuotations> {
+class _PreviousQuotationsState extends State<PreviousQuotations> {
   String? imgUrl;
-
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('User')
-            .doc(FirebaseAuth.instance.currentUser!.uid)
-            .collection('QuotationAdded')
-            .snapshots(),
-        builder: (BuildContext context, snapshot) {
-          return snapshot.connectionState == ConnectionState.waiting
-              ? const CircularProgressIndicator()
-              : SingleChildScrollView(
-                  child: ListView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: snapshot.data?.docs.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      DocumentSnapshot data = snapshot.data!.docs[index];
-                      print(snapshot.data!.docs[index].reference.id);
-
-                      return GestureDetector(
-                        onTap: (){
-print("Hello");
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => Quotation(
-                                              fromPreviousQuotation: true,
-                                              productCategory: "Food",
-                                              productQuantity: data['quantity'],
-                                              productname: data['productName'],
-                                              productimage: data['image'],
-                                            )));
-                        },
-
-                        child: Card(
-                          color: const Color(0xffe4d3e8),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0)),
-                          child: Container(
-                            alignment: Alignment.center,
-                            height: MediaQuery.of(context).size.height / 9,
-                            child: ListTile(
-                              trailing: Text(data['price'] + ' rs'),
-                              onTap: () {
-                                
-                              },
-                              leading: ConstrainedBox(
-                                constraints: const BoxConstraints(
-                                  minWidth: 66,
-                                  minHeight: 64,
-                                  maxWidth: 66,
-                                  maxHeight: 64,
-                                ),
-                                child: data['image'] == null
-                                    ? Container()
-                                    : Image.network(
-                                        data['image'],
-                                      ),
-                              ),
-                              title: Text(
-                                data['productName'],
-                                style: GoogleFonts.ubuntu(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w400,
-                                  color: const Color(0xff8C33C1),
-                                ),
-                              ),
-                              subtitle: Text(
-                                "Qty: ${data['quantity']}\nCategory: ${data['category']}",
-                                style: GoogleFonts.ubuntu(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w400,
-                                  color: const Color(0xFF8C33C1),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
-                    },
+    return SingleChildScrollView(
+      child: ListView.builder(
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        itemCount: widget.previousTenders.length,
+        itemBuilder: (BuildContext context, int index) {
+          return Card(
+            color: const Color(0xffe4d3e8),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0)),
+            child: Container(
+              alignment: Alignment.center,
+              height: MediaQuery.of(context).size.height / 9,
+              child: ListTile(
+                trailing: const Text(' rs'),
+                onTap: () {
+                  Tender tender = Tender(
+                    tenderQuotId: widget.previousTenders[index].tenderQuotId,
+                    category: widget.previousTenders[index].category,
+                    imgUrl: widget.previousTenders[index].imgUrl,
+                    name: widget.previousTenders[index].name,
+                    quantity: widget.previousTenders[index].quantity,
+                  );
+                  Navigator.pushNamed(
+                    context,
+                    MyRoutes.quotationRoute,
+                    arguments: QuotationScreenArguments(tenderData: tender,
+                                fromPreviousQuotation:
+                                    widget.fromPreviousQuotation) 
+                  );
+                  
+                },
+                leading: ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    minWidth: 66,
+                    minHeight: 64,
+                    maxWidth: 66,
+                    maxHeight: 64,
                   ),
-                );
-        });
+                  child: Image.network(
+                    widget.previousTenders[index].imgUrl,
+                  ),
+                ),
+                title: Text(
+                  widget.previousTenders[index].name,
+                  style: GoogleFonts.ubuntu(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w400,
+                    color: const Color(0xff8C33C1),
+                  ),
+                ),
+                subtitle: Text(
+                  "Qty: ${widget.previousTenders[index].quantity}\nCategory: ${widget.previousTenders[index].category}",
+                  style: GoogleFonts.ubuntu(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w400,
+                    color: const Color(0xFF8C33C1),
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
   }
 }

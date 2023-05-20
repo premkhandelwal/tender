@@ -36,11 +36,8 @@ class FirebaseProvider {
 
   Future<bool> addNewTender(Tender tender) async {
     try {
-      await firestoreInst
-          .collection('AddTender')
-          .doc(loggedInUser!.googleId)
-          .set(tender.toMap());
-      await sendTender(loggedInUser!.googleId);
+     
+      await sendTender(tender);
       return true;
     } catch (e) {
       return false;
@@ -87,15 +84,22 @@ class FirebaseProvider {
     }).toList();
   }
 
-  Future<void> sendTender(String docId) async {
+  Future<void> sendTender(Tender tender) async {
     List<Users> allUserList = await getUsersNearby();
+    CollectionReference<Map<String, dynamic>> tendersColl =
+        firestoreInst.collection('Tender');
+
+        Map<String, dynamic> sendMap = tender.toMap();
+    sendMap["userId"] = loggedInUser!.googleId;  
+   
+    DocumentReference<Map<String, dynamic>> submittedTender =
+        await tendersColl.add(sendMap);
+        
+    CollectionReference<Map<String, dynamic>> tendUseQuoColl =
+        firestoreInst.collection('UserTenderQuotation');
+
     for (var i = 0; i < allUserList.length; i++) {
-      print(allUserList[i].docId);
-      CollectionReference<Map<String, dynamic>> usersColl = firestoreInst
-          .collection('User')
-          .doc(allUserList[i].docId)
-          .collection('ReceivedTenders');
-      await usersColl.add({"senderId": docId});
+      tendUseQuoColl.add({"tenderId": submittedTender.id, "userId": allUserList[i].googleId});
     }
   }
 

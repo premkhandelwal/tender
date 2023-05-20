@@ -1,31 +1,18 @@
 // ignore_for_file: camel_case_types,prefer_const_literals_to_create_immutables, prefer_const_constructors, sized_box_for_whitespace, avoid_unnecessary_containers
 
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:vender/models/quotationModel.dart';
 
-import '../constants.dart';
-import '../logic/bloc/addQuotationBloc/bloc/add_quotation_bloc.dart';
+import 'package:vender/logic/bloc/addQuotationBloc/add_quotation_bloc.dart';
+import 'package:vender/models/tender.dart';
+import 'package:vender/routes/arguments/quotation_screen_args.dart';
 
 class Quotation extends StatefulWidget {
-  String? productname = "";
-  String? addTenderDocID;
-  int productQuantity = 1;
-  String productCategory = "";
-  String productimage = "";
-  bool? fromPreviousQuotation = false;
-  Quotation(
-      {this.productCategory = "",
-      this.productQuantity = 1,
-      this.productimage = "",
-      this.addTenderDocID,
-      this.productname,
-      this.fromPreviousQuotation});
+
+  const Quotation({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<Quotation> createState() => _QuotationState();
@@ -45,8 +32,7 @@ class _QuotationState extends State<Quotation> {
 
   @override
   void initState() {
-    productQuantity = widget.productQuantity;
-    dropdownvalue = widget.productCategory;
+    
     addQuotationBloc = BlocProvider.of<AddQuotationBloc>(context);
     super.initState();
   }
@@ -56,24 +42,26 @@ class _QuotationState extends State<Quotation> {
 
   @override
   Widget build(BuildContext context) {
+     final args = ModalRoute.of(context)!.settings.arguments as QuotationScreenArguments;
+     productQuantity =args.tenderData.quantity;
+    dropdownvalue = args.tenderData.category;
     return BlocConsumer<AddQuotationBloc, AddQuotationState>(
       listener: (context, state) {
-        // if (state is AddTenderSuccessState) {
-        //   const snackBar = SnackBar(
-        //     content: Text('Successfully added'),
-        //   );
-        //   ScaffoldMessenger.of(context).showSnackBar(snackBar);
-        //   Navigator.pop(context);
-        // }
+        if (state is AddQuotationSuccessState) {
+          const snackBar = SnackBar(
+            content: Text('Successfully added'),
+          );
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          Navigator.pop(context);
+        }
         // TODO: implement listener
       },
       builder: (context, state) {
-        //   if (state is FetchTenderInProgressState ||
-        //     state is AddTenderInProgressState) {
-        //   return Center(
-        //     child: CircularProgressIndicator(),
-        //   );
-        // }
+          if (state is AddQuotationInProgressState) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
         return SafeArea(
           child: Scaffold(
             body: Container(
@@ -186,7 +174,7 @@ class _QuotationState extends State<Quotation> {
                                                 borderRadius: BorderRadius.all(
                                                     Radius.circular(10))),
                                             child: Image.network(
-                                                widget.productimage)
+                                                args.tenderData.imgUrl)
                                             // (pickedFile == null)
                                             //     ? Image.asset(
                                             //         "assets/icons/product_img_rect.png")
@@ -223,7 +211,7 @@ class _QuotationState extends State<Quotation> {
                                       decoration: InputDecoration(
                                         isDense: true,
                                         border: UnderlineInputBorder(),
-                                        hintText: widget.productname,
+                                        hintText: args.tenderData.name,
                                         hintStyle: GoogleFonts.ubuntu(
                                           textStyle: TextStyle(
                                               fontSize: 15,
@@ -470,7 +458,7 @@ class _QuotationState extends State<Quotation> {
                                                 height: 30,
                                                 width: 90,
                                                 child: TextFormField(
-                                                  readOnly: widget
+                                                  readOnly: args
                                                           .fromPreviousQuotation!
                                                       ? true
                                                       : false,
@@ -496,7 +484,7 @@ class _QuotationState extends State<Quotation> {
                                                         GoogleFonts.ubuntu(
                                                       textStyle: TextStyle(
                                                           fontSize: 15,
-                                                          color: widget
+                                                          color: args
                                                                   .fromPreviousQuotation!
                                                               ? Colors.black
                                                               : Colors.grey,
@@ -524,7 +512,7 @@ class _QuotationState extends State<Quotation> {
                       ),
                     ),
                   ),
-                  widget.fromPreviousQuotation!
+                  args.fromPreviousQuotation!
                       ? Container()
                       : Padding(
                           padding: EdgeInsets.only(
@@ -533,55 +521,12 @@ class _QuotationState extends State<Quotation> {
                               right: MediaQuery.of(context).size.width / 3.8),
                           child: InkWell(
                             onTap: () async {
-                              var token = await FirebaseAuth
-                                  .instance.currentUser!
-                                  .getIdToken();
                               if (priceEditingController.text.isNotEmpty) {
-                                Map<String, dynamic> addTender = {
-                                  "name": widget.productname,
-                                  "imageUrl": widget.productimage,
-                                  "category": widget.productCategory,
-                                  "quantity": widget.productQuantity,
-                                  "quotes": FieldValue.arrayUnion([
-                                    {
-                                      "googleIdofVendor": token,
-                                    }
-                                  ])
-                                };
-                                // print('addTender Body ${addTender}');
-                                FirebaseFirestore.instance
-                                    .collection('AddTender')
-                                    .doc(widget.addTenderDocID)
-                                    .update(addTender)
-                                    .then((value) {
-                                  Map<String, dynamic> addQuotation = {
-                                    "productName": widget.productname,
-                                    "image": widget.productimage,
-                                    "category": widget.productCategory,
-                                    "quantity": widget.productQuantity,
-                                    "price": priceEditingController.text,
-                                    "vendorId": token
-                                  };
-
-                                  FirebaseFirestore.instance
-                                      .collection("User")
-                                      .doc(FirebaseAuth
-                                          .instance.currentUser!.uid)
-                                      .collection('QuotationAdded')
-                                      .add(addQuotation)
-                                      .then((value) {
-                                    Navigator.pop(context);
-                                    
-                                  });
-                                });
-
-                                // addQuotationBloc.add(AddQuotation(
-                                //     quotation: QuotationModel(
-                                //         name: widget.productname,
-                                //         imgUrl: widget.productimage,
-                                //         category: widget.productCategory,
-                                //         quantity: widget.productQuantity,
-                                //         price: priceEditingController.text)));
+                                addQuotationBloc.add(AddQuotation(
+                                    userTenderQuotationId:
+                                        args.tenderData.tenderQuotId,
+                                    quotedPrice: double.parse(
+                                        priceEditingController.text)));
                               } else {
                                 const snackBar = SnackBar(
                                   content: Text('Fill the price'),

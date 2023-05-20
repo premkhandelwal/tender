@@ -4,19 +4,20 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vender/firebase_options.dart';
 import 'package:provider/provider.dart';
 import 'package:vender/logic/bloc/AddTenderBloc/add_tender_bloc.dart';
-import 'package:vender/logic/bloc/addQuotationBloc/bloc/add_quotation_bloc.dart';
 import 'package:vender/logic/providers/firebase_provider.dart';
+import 'package:vender/logic/providers/quotation_provider.dart';
 import 'package:vender/pages/Quotation.dart';
 import 'package:vender/pages/add_new_tender_page.dart';
 import 'package:vender/pages/tender_page.dart';
 import 'package:vender/pages/customer_dashboard.dart';
 import 'package:vender/pages/login_page.dart';
-import 'package:vender/pages/previous_tender.dart';
 import 'package:vender/pages/select_vendor.dart';
 import 'package:vender/pages/venderDashBoard.dart';
 import 'package:vender/provider/google_sign_in_provider.dart';
 import 'package:vender/provider/location_provider.dart';
 import 'package:vender/routes/routes.dart';
+
+import 'logic/bloc/addQuotationBloc/add_quotation_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,7 +42,7 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) =>
-              AddQuotationBloc(firebaseProvider: FirebaseProvider()),
+              AddQuotationBloc(quotationProvider: QuotationProvider()),
         ),
       ],
       child: ChangeNotifierProvider(
@@ -57,7 +58,6 @@ class MyApp extends StatelessWidget {
                 const CustomerDashbord(),
             MyRoutes.tenderRoute: (context) => const TenderPage(),
             MyRoutes.addNewTenderRoute: (context) => const AddNewTenderPage(),
-            MyRoutes.previousTenderRoute: (context) => previousTender(),
             MyRoutes.quotationRoute: (context) => Quotation(),
           },
         ),
