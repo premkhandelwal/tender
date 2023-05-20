@@ -176,14 +176,18 @@ class _TenderPageState extends State<TenderPage> {
               ),
               BlocBuilder<AddTenderBloc, AddTenderState>(
                 builder: (context, state) {
-                  if (state is FetchTenderSuccessState) {
-
-                    return PreviousQuotations(
-                      previousTenders: [],
-                      fromPreviousQuotation: true,
+                  if (state is FetchTenderInProgressState) {
+                    return Center(
+                      child: CircularProgressIndicator(),
                     );
                   }
-                  return Text("No Previous Tenders found");
+                  if (state is! FetchTenderSuccessState) {
+                    return Text("No Previous Tenders found");
+                  }
+                  return PreviousQuotations(
+                    previousTenders: state.tenderData,
+                    fromPreviousQuotation: null,
+                  );
                 },
               ),
             ],

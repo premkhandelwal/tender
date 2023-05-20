@@ -10,7 +10,7 @@ class TenderBigsPage extends StatefulWidget {
   class TenderBigsPageState extends State<TenderBigsPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       body: Text("Bids Page")
     );
   }

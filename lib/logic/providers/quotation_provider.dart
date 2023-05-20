@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:vender/constants.dart';
-import 'package:vender/models/quotationModel.dart';
 import 'package:vender/models/tender.dart';
 
 class QuotationProvider {

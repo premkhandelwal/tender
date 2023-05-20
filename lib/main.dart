@@ -8,6 +8,7 @@ import 'package:vender/logic/providers/firebase_provider.dart';
 import 'package:vender/logic/providers/quotation_provider.dart';
 import 'package:vender/pages/Quotation.dart';
 import 'package:vender/pages/add_new_tender_page.dart';
+import 'package:vender/pages/bids_page.dart';
 import 'package:vender/pages/tender_page.dart';
 import 'package:vender/pages/customer_dashboard.dart';
 import 'package:vender/pages/login_page.dart';
@@ -16,6 +17,7 @@ import 'package:vender/pages/venderDashBoard.dart';
 import 'package:vender/provider/google_sign_in_provider.dart';
 import 'package:vender/provider/location_provider.dart';
 import 'package:vender/routes/routes.dart';
+import 'package:vender/widgets/sign_in_widget.dart';
 
 import 'logic/bloc/addQuotationBloc/add_quotation_bloc.dart';
 
@@ -52,13 +54,14 @@ class MyApp extends StatelessWidget {
           initialRoute: MyRoutes.loginRoute,
           routes: {
             MyRoutes.venderDashBoardRoute: (context) => const VenderDashBoard(),
-            MyRoutes.loginRoute: (context) => const LoginPage(),
+            MyRoutes.loginRoute: (context) => const SignInWidget(),
             MyRoutes.selectVendorRoute: (context) => SelectVendor(),
             MyRoutes.customerDashboardRoute: (context) =>
                 const CustomerDashbord(),
             MyRoutes.tenderRoute: (context) => const TenderPage(),
             MyRoutes.addNewTenderRoute: (context) => const AddNewTenderPage(),
-            MyRoutes.quotationRoute: (context) => Quotation(),
+            MyRoutes.quotationRoute: (context) => const Quotation(),
+            MyRoutes.bidsRoute: (context) => const TenderBigsPage(),
           },
         ),
       ),

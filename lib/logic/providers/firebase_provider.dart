@@ -7,20 +7,22 @@ import 'package:vender/constants.dart';
 import 'package:vender/models/quotationModel.dart';
 import 'package:vender/models/tender.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:vender/pages/quotation.dart';
-
 import '../../models/user.dart';
 
 class FirebaseProvider {
   FirebaseFirestore firestoreInst = FirebaseFirestore.instance;
   FirebaseStorage firebaseStorage = FirebaseStorage.instance;
 
-  Future<List<Map<String, dynamic>>> fetchPreviousTenders() async {
+  Future<List<Tender>> fetchPreviousTenders() async {
     QuerySnapshot<Map<String, dynamic>> data =
-        await firestoreInst.collection('AddTender').get();
-    print('__data ${data}');
-    List<Map<String, dynamic>> documentData =
-        data.docs.map((e) => e.data()).toList();
+        await firestoreInst.collection('Tender').get();
+    List<QueryDocumentSnapshot<Map<String, dynamic>>> tenderDocs = data.docs;
+    tenderDocs = tenderDocs
+        .where((element) => element["userId"] == loggedInUser!.googleId)
+        .toList();
+    List<Tender> documentData = tenderDocs.map((e) {
+      return Tender.fromMap(e.data());
+    }).toList();
 
     return documentData;
   }
@@ -36,7 +38,6 @@ class FirebaseProvider {
 
   Future<bool> addNewTender(Tender tender) async {
     try {
-     
       await sendTender(tender);
       return true;
     } catch (e) {
@@ -89,17 +90,18 @@ class FirebaseProvider {
     CollectionReference<Map<String, dynamic>> tendersColl =
         firestoreInst.collection('Tender');
 
-        Map<String, dynamic> sendMap = tender.toMap();
-    sendMap["userId"] = loggedInUser!.googleId;  
-   
+    Map<String, dynamic> sendMap = tender.toMap();
+    sendMap["userId"] = loggedInUser!.googleId;
+
     DocumentReference<Map<String, dynamic>> submittedTender =
         await tendersColl.add(sendMap);
-        
+
     CollectionReference<Map<String, dynamic>> tendUseQuoColl =
         firestoreInst.collection('UserTenderQuotation');
 
     for (var i = 0; i < allUserList.length; i++) {
-      tendUseQuoColl.add({"tenderId": submittedTender.id, "userId": allUserList[i].googleId});
+      tendUseQuoColl.add(
+          {"tenderId": submittedTender.id, "userId": allUserList[i].googleId});
     }
   }
 

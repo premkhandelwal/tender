@@ -19,7 +19,7 @@ class ProductQuantityChangdState extends AddTenderActionState {
 class FetchTenderInProgressState extends AddTenderState {}
 
 class FetchTenderSuccessState extends AddTenderState {
-  final List<Map<String, dynamic>> tenderData;
+  final List<Tender> tenderData;
   FetchTenderSuccessState({
     required this.tenderData,
   });

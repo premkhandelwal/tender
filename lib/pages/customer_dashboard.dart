@@ -1,8 +1,13 @@
 // ignore_for_file: prefer_const_constructors, unnecessary_new, unnecessary_const, avoid_unnecessary_containers
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vender/routes/routes.dart';
 
 class CustomerDashbord extends StatelessWidget {
@@ -255,14 +260,20 @@ class CustomerDashbord extends StatelessWidget {
                             width: MediaQuery.of(context).size.width / 1.45,
                             child: ElevatedButton.icon(
                               onPressed: () async {
-                                  final GoogleSignIn googleSignIn = GoogleSignIn();
-                await googleSignIn.signOut();
+                                final SharedPreferences prefs =
+                                    await SharedPreferences.getInstance();
+                                await prefs.clear();
                                 await FirebaseAuth.instance
                                     .signOut()
-                                    .then((value) {
-                                  Navigator.of(context).pushNamedAndRemoveUntil(
-                                      MyRoutes.loginRoute, (route) => false);
+                                    .then((value) async {
+                                  final GoogleSignIn googleSignIn =
+                                      GoogleSignIn();
+                                  await googleSignIn.disconnect();
+                                  await googleSignIn.signOut();
+                                  // await FirebaseFirestore.instance.clearPersistence();
                                 });
+                                Navigator.of(context).pushNamedAndRemoveUntil(
+                                    MyRoutes.loginRoute, (route) => false);
                               },
                               label: Padding(
                                 padding: EdgeInsets.fromLTRB(

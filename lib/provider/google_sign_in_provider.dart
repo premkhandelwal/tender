@@ -52,5 +52,6 @@ class GoogleSignInProvider extends ChangeNotifier {
     final GoogleSignIn googleSignIn = GoogleSignIn();
     await googleSignIn.signOut();
   }
+
   // notifyListeners();
 }

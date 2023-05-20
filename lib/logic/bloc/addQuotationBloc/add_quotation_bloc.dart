@@ -1,12 +1,8 @@
 import 'dart:async';
-
 import 'package:bloc/bloc.dart';
-import 'package:meta/meta.dart';
-import 'package:vender/logic/providers/firebase_provider.dart';
+import 'package:flutter/material.dart';
 import 'package:vender/logic/providers/quotation_provider.dart';
-import 'package:vender/models/quotationModel.dart';
 import 'package:vender/models/tender.dart';
-
 part 'add_quotation_event.dart';
 part 'add_quotation_state.dart';
 

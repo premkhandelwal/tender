@@ -88,7 +88,7 @@ class _SeeTenderState extends State<SeeTender> {
 
 class PreviousQuotations extends StatefulWidget {
   final List<Tender> previousTenders;
-  final bool fromPreviousQuotation;
+  final bool? fromPreviousQuotation;
   const PreviousQuotations({
     Key? key,
     required this.previousTenders,
@@ -117,23 +117,28 @@ class _PreviousQuotationsState extends State<PreviousQuotations> {
               alignment: Alignment.center,
               height: MediaQuery.of(context).size.height / 9,
               child: ListTile(
-                trailing: const Text(' rs'),
+                trailing: Text(widget.fromPreviousQuotation != null &&
+                        widget.fromPreviousQuotation!
+                    ? '${widget.previousTenders[index].price.toString()} rs'
+                    : ""),
                 onTap: () {
-                  Tender tender = Tender(
-                    tenderQuotId: widget.previousTenders[index].tenderQuotId,
-                    category: widget.previousTenders[index].category,
-                    imgUrl: widget.previousTenders[index].imgUrl,
-                    name: widget.previousTenders[index].name,
-                    quantity: widget.previousTenders[index].quantity,
-                  );
-                  Navigator.pushNamed(
-                    context,
-                    MyRoutes.quotationRoute,
-                    arguments: QuotationScreenArguments(tenderData: tender,
-                                fromPreviousQuotation:
-                                    widget.fromPreviousQuotation) 
-                  );
-                  
+                    Tender tender = Tender(
+                      price: widget.previousTenders[index].price,
+                      tenderQuotId: widget.previousTenders[index].tenderQuotId,
+                      category: widget.previousTenders[index].category,
+                      imgUrl: widget.previousTenders[index].imgUrl,
+                      name: widget.previousTenders[index].name,
+                      quantity: widget.previousTenders[index].quantity,
+                    );
+                  if (widget.fromPreviousQuotation == null) {
+                    Navigator.pushNamed(context, MyRoutes.bidsRoute);
+                  } else {
+                    Navigator.pushNamed(context, MyRoutes.quotationRoute,
+                        arguments: QuotationScreenArguments(
+                            tenderData: tender,
+                            fromPreviousQuotation:
+                                widget.fromPreviousQuotation));
+                  }
                 },
                 leading: ConstrainedBox(
                   constraints: const BoxConstraints(

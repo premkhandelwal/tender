@@ -30,10 +30,11 @@
 //     );
 //   }
 // }
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vender/constants.dart';
 import 'package:vender/models/user.dart';
@@ -51,25 +52,18 @@ class LoginPage extends StatefulWidget {
   State<LoginPage> createState() => _InitialScreenState();
 }
 
-class _InitialScreenState extends State<LoginPage> {
-  Future<String> navigateToInitialScreen() async {
-    if (FirebaseAuth.instance.currentUser != null) {
-      var collection = FirebaseFirestore.instance.collection('User');
-      var docSnapshot =
-          await collection.doc(FirebaseAuth.instance.currentUser!.uid).get();
-      var data = docSnapshot.data();
-      print('data ${data} ');
-      if (data == null) {
-        return '';
-      } else {
-        loggedInUser = Users.fromMap(data);
-        return data['type'];
-      }
-    } else {
-      return 'signIn';
-    }
+Future<String> navigateToInitialScreen() async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? userData = prefs.getString("userData");
+  if (userData != null) {
+    return 'signOut';
+  } else {
+    return 'signIn';
   }
+  
+}
 
+class _InitialScreenState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
@@ -77,8 +71,6 @@ class _InitialScreenState extends State<LoginPage> {
       print('value $value');
       if (value == 'vendor') {
         Navigator.pushReplacementNamed(context, MyRoutes.venderDashBoardRoute);
-         Navigator.pushReplacementNamed(
-            context, MyRoutes.customerDashboardRoute);
       }
       if (value == 'customer') {
         Navigator.pushReplacementNamed(

@@ -2,12 +2,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vender/pages/venderSeeTender.dart';
 import 'package:vender/routes/routes.dart';
 
 class VenderDashBoard extends StatelessWidget {
   const VenderDashBoard({super.key});
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,8 +31,10 @@ class VenderDashBoard extends StatelessWidget {
                 ),
                 child: InkWell(
                   onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => SeeTender()));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const SeeTender()));
                   },
                   child: SizedBox(
                     width: MediaQuery.of(context).size.width / 2.3,
@@ -73,11 +76,11 @@ class VenderDashBoard extends StatelessWidget {
                                       textStyle: TextStyle(
                                     fontSize: 19,
                                     fontWeight: FontWeight.bold,
-                                    color: Color(0xff8D33C3),
+                                    color: const Color(0xff8D33C3),
                                     letterSpacing: 1,
                                     shadows: [
                                       Shadow(
-                                        offset: Offset(2.0, 2.0),
+                                        offset: const Offset(2.0, 2.0),
                                         blurRadius: 6.0,
                                         color: Colors.grey.withOpacity(1.0),
                                       ),
@@ -97,12 +100,18 @@ class VenderDashBoard extends StatelessWidget {
               width: MediaQuery.of(context).size.width / 1.45,
               child: ElevatedButton.icon(
                 onPressed: () async {
-                  final GoogleSignIn googleSignIn = GoogleSignIn();
-                  await googleSignIn.signOut();
-                  await FirebaseAuth.instance.signOut().then((value) {
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                        MyRoutes.loginRoute, (route) => false);
+                    final SharedPreferences prefs =
+                                    await SharedPreferences.getInstance();
+                                await prefs.clear();
+                  await FirebaseAuth.instance.signOut().then((value) async {
+                    final GoogleSignIn googleSignIn = GoogleSignIn();
+                    await googleSignIn.disconnect();
+                    await googleSignIn.signOut();
+
+                    
                   });
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                        MyRoutes.loginRoute, (route) => false);
                 },
                 label: Padding(
                   padding: EdgeInsets.fromLTRB(
@@ -111,7 +120,7 @@ class VenderDashBoard extends StatelessWidget {
                     alignment: Alignment.centerLeft,
                     child: Text("Logout",
                         style: GoogleFonts.lato(
-                            textStyle: TextStyle(fontSize: 20))),
+                            textStyle: const TextStyle(fontSize: 20))),
                   ),
                 ),
                 icon: Padding(

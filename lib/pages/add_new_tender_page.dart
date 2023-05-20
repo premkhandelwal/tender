@@ -496,19 +496,14 @@ class _AddNewTenderPageState extends State<AddNewTenderPage> {
                         ),
                         child: InkWell(
                           onTap: () async {
-                            var token = await FirebaseAuth.instance.currentUser!
-                                .getIdToken();
+                           
                             if (url != null) {
                               Map<String, dynamic> addTender = {
                                 "name": nameEditingController.text,
                                 "imgUrl": url,
                                 "category": dropdownvalue,
                                 "quantity": productQuantity,
-                                "quotes": FieldValue.arrayUnion([
-                                  {
-                                    "googleIdofCustomer": token,
-                                  }
-                                ])
+                                
                               };
                               Tender tender = Tender.fromMap(addTender);
                               addTenderBloc.add(AddNewTender(tender: tender));

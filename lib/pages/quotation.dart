@@ -45,6 +45,10 @@ class _QuotationState extends State<Quotation> {
      final args = ModalRoute.of(context)!.settings.arguments as QuotationScreenArguments;
      productQuantity =args.tenderData.quantity;
     dropdownvalue = args.tenderData.category;
+    if(args.tenderData.price != null){
+
+    priceEditingController.text = args.tenderData.price.toString();
+    }
     return BlocConsumer<AddQuotationBloc, AddQuotationState>(
       listener: (context, state) {
         if (state is AddQuotationSuccessState) {

@@ -6,6 +6,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vender/constants.dart';
+import 'package:vender/models/user.dart';
+import 'package:vender/pages/login_page.dart';
 import 'package:vender/pages/select_vendor.dart';
 import 'package:vender/provider/google_sign_in_provider.dart';
 
@@ -13,18 +15,12 @@ import '../routes/routes.dart';
 
 class SignInWidget extends StatelessWidget {
   const SignInWidget({super.key});
+
   Future<String> navigateToInitialScreen() async {
-    if (FirebaseAuth.instance.currentUser != null) {
-      var collection = FirebaseFirestore.instance.collection('User');
-      var docSnapshot =
-          await collection.doc(FirebaseAuth.instance.currentUser!.uid).get();
-      var data = docSnapshot.data();
-      print('data ${data} ');
-      if (data == null) {
-        return '';
-      } else {
-        return data['type'];
-      }
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userData = prefs.getString("userData");
+    if (userData != null) {
+      return 'signOut';
     } else {
       return 'signIn';
     }
@@ -117,8 +113,6 @@ class SignInWidget extends StatelessWidget {
                             ),
                             onPressed: () async {
                               String userDocId = "";
-                              final SharedPreferences prefs =
-                                  await SharedPreferences.getInstance();
 
                               final provider =
                                   // ignore: use_build_context_synchronously
@@ -136,6 +130,7 @@ class SignInWidget extends StatelessWidget {
                                     currentPosition?.longitude
                                   ]
                                 };
+                                loggedInUser = Users.fromMap(userData);
                                 final userRef = FirebaseFirestore.instance
                                     .collection("User")
                                     .doc(value.user!.uid);
@@ -146,36 +141,43 @@ class SignInWidget extends StatelessWidget {
                                       .doc(value.user!.uid)
                                       .set(userData, SetOptions(merge: true));
                                 }
-                                userGoogleId = value.credential!.accessToken!;
                                 userDocId = value.user!.uid;
-                              }).then((value) {
-                                navigateToInitialScreen().then((value) {
-                                  print('value $value');
-                                  if (value == 'vendor') {
-                                    Navigator.pushReplacementNamed(
-                                        context, MyRoutes.venderDashBoardRoute);
-                                  }
-                                  if (value == 'customer') {
-                                    Navigator.pushReplacementNamed(context,
-                                        MyRoutes.customerDashboardRoute);
-                                  }
-                                  if (value == '') {
-                                    Navigator.pushReplacement(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => SelectVendor(
-                                                  userDocId: FirebaseAuth
-                                                      .instance
-                                                      .currentUser!
-                                                      .uid,
-                                                )));
-                                  }
-                                  if (value == 'signIn') {
-                                    Navigator.pushReplacement(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                const SignInWidget()));
+                              }).then((value) async {
+                                var collection = FirebaseFirestore.instance
+                                    .collection('User');
+                                collection
+                                    .doc(FirebaseAuth.instance.currentUser!.uid)
+                                    .get()
+                                    .then((value) {
+                                  var data = value.data();
+
+                                  if (data != null) {
+                                    if (data["type"] == 'vendor') {
+                                      Navigator.pushReplacementNamed(context,
+                                          MyRoutes.venderDashBoardRoute);
+                                    } else if (data["type"] == 'customer') {
+                                      Navigator.pushReplacementNamed(context,
+                                          MyRoutes.customerDashboardRoute);
+                                    }
+                                    if (data["type"] == '') {
+                                      Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  SelectVendor(
+                                                    userDocId: FirebaseAuth
+                                                        .instance
+                                                        .currentUser!
+                                                        .uid,
+                                                  )));
+                                    }
+                                    if (data["type"] == 'signIn') {
+                                      Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const SignInWidget()));
+                                    }
                                   }
                                 });
                               });

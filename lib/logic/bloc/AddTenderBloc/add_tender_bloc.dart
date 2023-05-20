@@ -28,7 +28,7 @@ class AddTenderBloc extends Bloc<AddTenderEvent, AddTenderState> {
   FutureOr<void> fetchPreviousTenders(
       FetchPreviousTenders event, Emitter<AddTenderState> emit) async {
     emit(FetchTenderInProgressState());
-    List<Map<String, dynamic>> tenderData =
+    List<Tender> tenderData =
         await firebaseProvider.fetchPreviousTenders();
     emit(FetchTenderSuccessState(tenderData: tenderData));
   }
