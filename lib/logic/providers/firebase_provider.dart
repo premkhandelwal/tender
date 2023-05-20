@@ -5,6 +5,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:vender/constants.dart';
 import 'package:vender/models/quotationModel.dart';
+import 'package:vender/models/quotes.dart';
 import 'package:vender/models/tender.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import '../../models/user.dart';
@@ -21,7 +22,9 @@ class FirebaseProvider {
         .where((element) => element["userId"] == loggedInUser!.googleId)
         .toList();
     List<Tender> documentData = tenderDocs.map((e) {
-      return Tender.fromMap(e.data());
+      Map<String, dynamic> doc = e.data();
+      doc["tenderId"] = e.id;
+      return Tender.fromMap(doc);
     }).toList();
 
     return documentData;
@@ -37,12 +40,8 @@ class FirebaseProvider {
   }
 
   Future<bool> addNewTender(Tender tender) async {
-    try {
-      await sendTender(tender);
-      return true;
-    } catch (e) {
-      return false;
-    }
+    await sendTender(tender);
+    return true;
   }
 
   Future<String> addImage(XFile? pickedFile) async {
@@ -74,15 +73,21 @@ class FirebaseProvider {
 
   Future<List<Users>> getUsersNearby() async {
     List<Users> allUserList = await getAllUsers();
-    return allUserList.where((user) {
-      double distanceInMeters = Geolocator.distanceBetween(
-        user.coordinates[0],
-        user.coordinates[1],
-        loggedInUser!.coordinates[0],
-        loggedInUser!.coordinates[1],
-      );
-      return (distanceInMeters / 1000) <= 10;
-    }).toList();
+    for (var i = 0; i < allUserList.length; i++) {
+      Users user = allUserList[i];
+      if (user.coordinates.isNotEmpty) {
+        double distanceInMeters = Geolocator.distanceBetween(
+          user.coordinates[0],
+          user.coordinates[1],
+          loggedInUser!.coordinates[0],
+          loggedInUser!.coordinates[1],
+        );
+        if ((distanceInMeters / 1000) > 10) {
+          allUserList.removeAt(i);
+        }
+      }
+    }
+    return allUserList;
   }
 
   Future<void> sendTender(Tender tender) async {
@@ -105,12 +110,34 @@ class FirebaseProvider {
     }
   }
 
-  Future<void> recieveTenders() async {
-    QuerySnapshot<Map<String, dynamic>> data = await firestoreInst
-        .collection('User')
-        .doc("ReceivedTenders")
-        .collection(loggedInUser!.googleId)
-        .get();
-    print(data);
+  Future<List<Quotes>> fetchQuotesforTender(String tenderId) async {
+    final List<Quotes> allQuotesList = [];
+    QuerySnapshot<Map<String, dynamic>> tendUseQuoColl =
+        await firestoreInst.collection('UserTenderQuotation').get();
+    List<QueryDocumentSnapshot<Map<String, dynamic>>> snapshots =
+        tendUseQuoColl.docs;
+    List<QueryDocumentSnapshot<Map<String, dynamic>>> listTenderQuotes =
+        snapshots.where((element) => element["tenderId"] == tenderId).toList();
+    for (var doc in listTenderQuotes) {
+      Map<String, dynamic> data = doc.data();
+      DocumentSnapshot<Map<String, dynamic>> usersInfo = await firestoreInst
+          .collection('User')
+          .doc(data["userId"])
+          .get();
+      if (usersInfo.data() != null) {
+        data["userInfo"] = Users.fromMap(usersInfo.data()!);
+      Quotes quote = Quotes.fromMap(data);
+      allQuotesList.add(quote);
+      }
+
+    }
+    return allQuotesList;
+  }
+
+  Future<void> awardTender(Tender tender) async {
+    await firestoreInst
+        .collection('UserTenderQuotation')
+        .doc(tender.tenderQuotId)
+        .update({"awarded": true});
   }
 }

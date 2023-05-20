@@ -25,3 +25,17 @@ class AddImage extends AddTenderEvent {
     required this.imgFile,
   });
 }
+
+class FetchQuotesEvent extends AddTenderEvent {
+  final String tenderId;
+  FetchQuotesEvent({
+    required this.tenderId,
+  });
+}
+
+class AwardQuoteTenderEvent extends AddTenderEvent {
+  final Tender tender;
+  AwardQuoteTenderEvent({
+    required this.tender,
+  });
+}

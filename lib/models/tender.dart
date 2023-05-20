@@ -7,6 +7,8 @@ class Tender {
   final String category;
   final int quantity;
   final double? price;
+  final String? awardedId;
+  final String? tenderId;
   Tender({
     required this.tenderQuotId,
     required this.name,
@@ -14,6 +16,8 @@ class Tender {
     required this.category,
     required this.quantity,
     this.price,
+    this.awardedId,
+    this.tenderId,
   });
 
   Map<String, dynamic> toMap() {
@@ -32,7 +36,8 @@ class Tender {
         imgUrl: map['imgUrl'] ?? '',
         category: map['category'] ?? '',
         quantity: map['quantity'] ?? '',
-        price: map["quotationPrice"]
+        price: map["quotationPrice"],
+        tenderId: map["tenderId"],
         // quotes: List<Map<String, dynamic>>.from(map['quotes'] as List),
         );
   }

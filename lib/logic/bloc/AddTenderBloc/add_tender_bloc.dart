@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:meta/meta.dart';
 
 import 'package:vender/logic/providers/firebase_provider.dart';
+import 'package:vender/models/quotes.dart';
 import 'package:vender/models/tender.dart';
 
 part 'add_tender_event.dart';
@@ -18,6 +19,8 @@ class AddTenderBloc extends Bloc<AddTenderEvent, AddTenderState> {
     on<FetchPreviousTenders>(fetchPreviousTenders);
     on<AddNewTender>(addNewTender);
     on<AddImage>(addImageTender);
+    on<FetchQuotesEvent>(fetchQuotes);
+    // on<AwardQuoteTenderEvent>(addImageTender);
   }
 
   FutureOr<void> productQuantityIncrease(
@@ -28,8 +31,7 @@ class AddTenderBloc extends Bloc<AddTenderEvent, AddTenderState> {
   FutureOr<void> fetchPreviousTenders(
       FetchPreviousTenders event, Emitter<AddTenderState> emit) async {
     emit(FetchTenderInProgressState());
-    List<Tender> tenderData =
-        await firebaseProvider.fetchPreviousTenders();
+    List<Tender> tenderData = await firebaseProvider.fetchPreviousTenders();
     emit(FetchTenderSuccessState(tenderData: tenderData));
   }
 
@@ -42,6 +44,7 @@ class AddTenderBloc extends Bloc<AddTenderEvent, AddTenderState> {
     } else {
       emit(AddTenderFailureState());
     }
+    // emit(AddTenderFailureState());
   }
 
   FutureOr<void> addImageTender(
@@ -49,5 +52,13 @@ class AddTenderBloc extends Bloc<AddTenderEvent, AddTenderState> {
     emit(AddImageInProgressState());
     String imgUrl = await firebaseProvider.addImage(event.imgFile);
     emit(AddImageSuccessState(imgUrl: imgUrl));
+  }
+
+  FutureOr<void> fetchQuotes(
+      FetchQuotesEvent event, Emitter<AddTenderState> emit) async {
+    emit(FetchQuotesInProgressState());
+    List<Quotes> quotesList =
+        await firebaseProvider.fetchQuotesforTender(event.tenderId);
+    emit(FetchQuotesSuccessState(quotesList: quotesList));
   }
 }

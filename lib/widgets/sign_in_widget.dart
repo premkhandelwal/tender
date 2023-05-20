@@ -10,12 +10,18 @@ import 'package:vender/models/user.dart';
 import 'package:vender/pages/login_page.dart';
 import 'package:vender/pages/select_vendor.dart';
 import 'package:vender/provider/google_sign_in_provider.dart';
+import 'package:vender/provider/location_provider.dart';
 
 import '../routes/routes.dart';
 
-class SignInWidget extends StatelessWidget {
+class SignInWidget extends StatefulWidget {
   const SignInWidget({super.key});
 
+  @override
+  State<SignInWidget> createState() => _SignInWidgetState();
+}
+
+class _SignInWidgetState extends State<SignInWidget> {
   Future<String> navigateToInitialScreen() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String? userData = prefs.getString("userData");
@@ -26,6 +32,13 @@ class SignInWidget extends StatelessWidget {
     }
   }
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getCurrentPosition(context);
+
+  }
   @override
   Widget build(BuildContext context) {
     return SafeArea(

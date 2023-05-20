@@ -34,8 +34,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    getCurrentPosition(context);
-
+    
     return MultiBlocProvider(
       providers: [
         BlocProvider(
@@ -61,7 +60,7 @@ class MyApp extends StatelessWidget {
             MyRoutes.tenderRoute: (context) => const TenderPage(),
             MyRoutes.addNewTenderRoute: (context) => const AddNewTenderPage(),
             MyRoutes.quotationRoute: (context) => const Quotation(),
-            MyRoutes.bidsRoute: (context) => const TenderBigsPage(),
+            MyRoutes.bidsRoute: (context) =>  TenderBigsPage(),
           },
         ),
       ),

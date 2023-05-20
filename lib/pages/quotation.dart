@@ -5,11 +5,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:vender/logic/bloc/addQuotationBloc/add_quotation_bloc.dart';
-import 'package:vender/models/tender.dart';
-import 'package:vender/routes/arguments/quotation_screen_args.dart';
+import 'package:vender/routes/arguments/screen_args.dart';
 
 class Quotation extends StatefulWidget {
-
   const Quotation({
     Key? key,
   }) : super(key: key);
@@ -32,7 +30,6 @@ class _QuotationState extends State<Quotation> {
 
   @override
   void initState() {
-    
     addQuotationBloc = BlocProvider.of<AddQuotationBloc>(context);
     super.initState();
   }
@@ -42,33 +39,33 @@ class _QuotationState extends State<Quotation> {
 
   @override
   Widget build(BuildContext context) {
-     final args = ModalRoute.of(context)!.settings.arguments as QuotationScreenArguments;
-     productQuantity =args.tenderData.quantity;
+    final args =
+        ModalRoute.of(context)!.settings.arguments as QuotationScreenArguments;
+    productQuantity = args.tenderData.quantity;
     dropdownvalue = args.tenderData.category;
-    if(args.tenderData.price != null){
-
-    priceEditingController.text = args.tenderData.price.toString();
+    if (args.tenderData.price != null) {
+      priceEditingController.text = args.tenderData.price.toString();
     }
-    return BlocConsumer<AddQuotationBloc, AddQuotationState>(
-      listener: (context, state) {
-        if (state is AddQuotationSuccessState) {
-          const snackBar = SnackBar(
-            content: Text('Successfully added'),
-          );
-          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-          Navigator.pop(context);
-        }
-        // TODO: implement listener
-      },
-      builder: (context, state) {
-          if (state is AddQuotationInProgressState) {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-        return SafeArea(
-          child: Scaffold(
-            body: Container(
+    return SafeArea(
+      child: Scaffold(
+        body: BlocConsumer<AddQuotationBloc, AddQuotationState>(
+          listener: (context, state) {
+            if (state is AddQuotationSuccessState) {
+              const snackBar = SnackBar(
+                content: Text('Successfully added'),
+              );
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+              Navigator.pop(context);
+            }
+            // TODO: implement listener
+          },
+          builder: (context, state) {
+            if (state is AddQuotationInProgressState) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            return Container(
               child: Stack(
                 children: [
                   Positioned(
@@ -101,8 +98,7 @@ class _QuotationState extends State<Quotation> {
                               },
                               child: Padding(
                                 padding: EdgeInsets.only(
-                                    left:
-                                        MediaQuery.of(context).size.width / 70,
+                                    left: MediaQuery.of(context).size.width / 70,
                                     right:
                                         MediaQuery.of(context).size.width / 30),
                                 child: Icon(
@@ -146,8 +142,7 @@ class _QuotationState extends State<Quotation> {
                                 offset: Offset(2.0, 2.0))
                           ],
                           color: Color(0xffFAF4FB),
-                          borderRadius:
-                              BorderRadius.all(Radius.circular(20.0))),
+                          borderRadius: BorderRadius.all(Radius.circular(20.0))),
                       padding: EdgeInsets.only(left: 20, top: 20),
                       child: Column(
                         children: [
@@ -222,8 +217,7 @@ class _QuotationState extends State<Quotation> {
                                               fontWeight: FontWeight.w400,
                                               letterSpacing: 0.75),
                                         ),
-                                        contentPadding:
-                                            EdgeInsets.only(left: 26),
+                                        contentPadding: EdgeInsets.only(left: 26),
                                       ),
                                     ),
                                   )
@@ -237,8 +231,7 @@ class _QuotationState extends State<Quotation> {
                               Column(
                                 children: [
                                   Padding(
-                                    padding:
-                                        EdgeInsets.only(top: 14, bottom: 15),
+                                    padding: EdgeInsets.only(top: 14, bottom: 15),
                                     child: Text(
                                       "Product Quantity",
                                       style: GoogleFonts.lato(
@@ -363,8 +356,7 @@ class _QuotationState extends State<Quotation> {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     Padding(
-                                      padding:
-                                          const EdgeInsets.only(left: 15.0),
+                                      padding: const EdgeInsets.only(left: 15.0),
                                       child: DropdownButtonHideUnderline(
                                         child: DropdownButton<String>(
                                           value: dropdownvalue,
@@ -442,8 +434,7 @@ class _QuotationState extends State<Quotation> {
                                                 CrossAxisAlignment.center,
                                             children: [
                                               IconTheme(
-                                                data:
-                                                    IconThemeData(opacity: 100),
+                                                data: IconThemeData(opacity: 100),
                                                 child: ImageIcon(
                                                   AssetImage(
                                                       "assets/icons/rupee.png"),
@@ -462,17 +453,16 @@ class _QuotationState extends State<Quotation> {
                                                 height: 30,
                                                 width: 90,
                                                 child: TextFormField(
-                                                  readOnly: args
-                                                          .fromPreviousQuotation!
-                                                      ? true
-                                                      : false,
+                                                  readOnly:
+                                                      args.fromPreviousQuotation!
+                                                          ? true
+                                                          : false,
                                                   keyboardType:
                                                       TextInputType.number,
                                                   controller:
                                                       priceEditingController,
                                                   decoration: InputDecoration(
-                                                    errorBorder:
-                                                        InputBorder.none,
+                                                    errorBorder: InputBorder.none,
                                                     enabledBorder:
                                                         InputBorder.none,
                                                     disabledBorder:
@@ -484,14 +474,13 @@ class _QuotationState extends State<Quotation> {
                                                     isDense: true,
                                                     border: InputBorder.none,
                                                     hintText: "10,000",
-                                                    hintStyle:
-                                                        GoogleFonts.ubuntu(
+                                                    hintStyle: GoogleFonts.ubuntu(
                                                       textStyle: TextStyle(
                                                           fontSize: 15,
-                                                          color: args
-                                                                  .fromPreviousQuotation!
-                                                              ? Colors.black
-                                                              : Colors.grey,
+                                                          color:
+                                                              args.fromPreviousQuotation!
+                                                                  ? Colors.black
+                                                                  : Colors.grey,
                                                           fontWeight:
                                                               FontWeight.w400,
                                                           letterSpacing: 0.75),
@@ -535,7 +524,7 @@ class _QuotationState extends State<Quotation> {
                                 const snackBar = SnackBar(
                                   content: Text('Fill the price'),
                                 );
-
+      
                                 ScaffoldMessenger.of(context)
                                     .showSnackBar(snackBar);
                               }
@@ -566,8 +555,7 @@ class _QuotationState extends State<Quotation> {
                                   ),
                                   Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
                                     children: [
                                       IconTheme(
                                         data: IconThemeData(opacity: 100),
@@ -580,8 +568,7 @@ class _QuotationState extends State<Quotation> {
                                   ),
                                   Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
                                     children: [
                                       Padding(
                                         padding: EdgeInsets.only(left: 10),
@@ -606,10 +593,10 @@ class _QuotationState extends State<Quotation> {
                         ),
                 ],
               ),
-            ),
-          ),
-        );
-      },
+            );
+          },
+        ),
+      ),
     );
   }
 }

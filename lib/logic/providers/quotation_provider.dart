@@ -30,7 +30,7 @@ class QuotationProvider {
       Map<String, dynamic>? tenderData = tenderInfo.data();
       if (tenderData != null) {
         tenderData['tenderQuotId'] = data.id;
-        
+        tenderData["tenderId"] = data["tenderId"];
         if (data.data().toString().contains('quotationPrice')) {
           tenderData["quotationPrice"] = data["quotationPrice"];
           Tender tender = Tender.fromMap(tenderData);
