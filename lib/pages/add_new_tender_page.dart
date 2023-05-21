@@ -1,8 +1,5 @@
 // ignore_for_file: camel_case_types,prefer_const_literals_to_create_immutables, prefer_const_constructors, sized_box_for_whitespace, avoid_unnecessary_containers
-
 import 'dart:io';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -60,21 +57,6 @@ class _AddNewTenderPageState extends State<AddNewTenderPage> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AddTenderBloc, AddTenderState>(
-      /* bloc: addTenderBloc,
-      listenWhen: (previous, current) {
-        if (current is AddTenderActionState) {
-          return true;
-        } else {
-          return false;
-        }
-      },
-      buildWhen: (previous, current) {
-        if (current is! AddTenderActionState) {
-          return true;
-        } else {
-          return false;
-        }
-      }, */
       listener: (context, state) {
         if (state is AddImageSuccessState) {
           url = state.imgUrl;
@@ -376,10 +358,6 @@ class _AddNewTenderPageState extends State<AddNewTenderPage> {
                               productQuantity--;
                               addTenderBloc.add(ProductQuantityChange(
                                   prodQty: productQuantity));
-                              // productQuantity != 1
-                              //     ? productQuantity--
-                              //     : productQuantity;
-                              // setState(() {});
                             },
                             child: SizedBox(
                               height: 21,
@@ -515,22 +493,31 @@ class _AddNewTenderPageState extends State<AddNewTenderPage> {
                           borderRadius: BorderRadius.all(Radius.circular(10)),
                         ),
                         child: InkWell(
-                          onTap: () {
-                            if (url != null && dropdownvalue != null) {
-                              addTenderBloc.add(AddNewTender(
-                                  tender: Tender(
-                                      name: nameEditingController.text,
-                                      imgUrl: url!,
-                                      category: dropdownvalue,
-                                      quantity: productQuantity)));
+                          onTap: () async {
+                           
+                            if (url != null) {
+                              Map<String, dynamic> addTender = {
+                                "name": nameEditingController.text,
+                                "imgUrl": url,
+                                "category": dropdownvalue,
+                                "quantity": productQuantity,
+                                
+                              };
+                              Tender tender = Tender.fromMap(addTender);
+                              addTenderBloc.add(AddNewTender(tender: tender));
+                              
+                              // addTenderBloc.add(AddNewTender(
+                              //     tender: Tender(
+                              //         name: nameEditingController.text,
+                              //         imgUrl: url!,
+                              //         category: dropdownvalue,
+                              //         quantity: productQuantity)));
                             } else {
                               const snackBar = SnackBar(
                                 content:
                                     Text('Please fill all the required fields'),
                               );
 
-// Find the ScaffoldMessenger in the widget tree
-// and use it to show a SnackBar.
                               ScaffoldMessenger.of(context)
                                   .showSnackBar(snackBar);
                             }

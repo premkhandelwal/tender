@@ -1,11 +1,12 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
+// ignore: depend_on_referenced_packages
 import 'package:meta/meta.dart';
 
 import 'package:vender/logic/providers/firebase_provider.dart';
+import 'package:vender/models/quotes.dart';
 import 'package:vender/models/tender.dart';
 
 part 'add_tender_event.dart';
@@ -18,6 +19,8 @@ class AddTenderBloc extends Bloc<AddTenderEvent, AddTenderState> {
     on<FetchPreviousTenders>(fetchPreviousTenders);
     on<AddNewTender>(addNewTender);
     on<AddImage>(addImageTender);
+    on<FetchQuotesEvent>(fetchQuotes);
+    on<AwardQuoteTenderEvent>(awardTender);
   }
 
   FutureOr<void> productQuantityIncrease(
@@ -28,8 +31,7 @@ class AddTenderBloc extends Bloc<AddTenderEvent, AddTenderState> {
   FutureOr<void> fetchPreviousTenders(
       FetchPreviousTenders event, Emitter<AddTenderState> emit) async {
     emit(FetchTenderInProgressState());
-    List<Map<String, dynamic>> tenderData =
-        await firebaseProvider.fetchPreviousTenders();
+    List<Tender> tenderData = await firebaseProvider.fetchPreviousTenders();
     emit(FetchTenderSuccessState(tenderData: tenderData));
   }
 
@@ -42,6 +44,7 @@ class AddTenderBloc extends Bloc<AddTenderEvent, AddTenderState> {
     } else {
       emit(AddTenderFailureState());
     }
+    // emit(AddTenderFailureState());
   }
 
   FutureOr<void> addImageTender(
@@ -49,5 +52,32 @@ class AddTenderBloc extends Bloc<AddTenderEvent, AddTenderState> {
     emit(AddImageInProgressState());
     String imgUrl = await firebaseProvider.addImage(event.imgFile);
     emit(AddImageSuccessState(imgUrl: imgUrl));
+  }
+
+  FutureOr<void> fetchQuotes(
+      FetchQuotesEvent event, Emitter<AddTenderState> emit) async {
+    try {
+      emit(FetchQuotesInProgressState());
+      Map<String, List<Quotes>> quotesList =
+          await firebaseProvider.fetchQuotesforTender(event.tenderId);
+      emit(FetchQuotesSuccessState(quotesList: quotesList));
+    } catch (e) {
+      emit(FetchQuotesFailureState());
+    }
+  }
+
+  FutureOr<void> awardTender(
+      AwardQuoteTenderEvent event, Emitter<AddTenderState> emit) async {
+    emit(AwardQuoteTenderInProgressState());
+    bool awarded =
+        await firebaseProvider.awardTender(event.quote, event.accepted);
+    if (awarded) {
+      emit(AwardQuoteTenderSuccessState(
+        accepted: event.accepted,
+        quote: event.quote,
+      ));
+    } else {
+      emit(AwardQuoteTenderFailureState());
+    }
   }
 }

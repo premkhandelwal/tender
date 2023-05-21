@@ -19,7 +19,7 @@ class ProductQuantityChangdState extends AddTenderActionState {
 class FetchTenderInProgressState extends AddTenderState {}
 
 class FetchTenderSuccessState extends AddTenderState {
-  final List<Map<String, dynamic>> tenderData;
+  final List<Tender> tenderData;
   FetchTenderSuccessState({
     required this.tenderData,
   });
@@ -43,3 +43,27 @@ class AddImageSuccessState extends AddTenderState {
 }
 
 class AddImageFailureState extends AddTenderState {}
+
+class FetchQuotesInProgressState extends AddTenderState {}
+
+class FetchQuotesSuccessState extends AddTenderState {
+  final Map<String, List<Quotes>> quotesList;
+  FetchQuotesSuccessState({
+    required this.quotesList,
+  });
+}
+
+class FetchQuotesFailureState extends AddTenderState {}
+
+class AwardQuoteTenderInProgressState extends AddTenderState {}
+
+class AwardQuoteTenderSuccessState extends AddTenderState {
+  final Quotes quote;
+  final bool accepted;
+  AwardQuoteTenderSuccessState({
+    required this.quote,
+    required this.accepted,
+  });
+}
+
+class AwardQuoteTenderFailureState extends AddTenderState {}
