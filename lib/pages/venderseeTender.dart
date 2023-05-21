@@ -28,6 +28,7 @@ class _SeeTenderState extends State<SeeTender> {
   Widget build(BuildContext context) {
     List<Tender> currentTenders = [];
     List<Tender> previousTenders = [];
+    List<Tender> acceptedTenders = [];
 
     return Scaffold(body: BlocBuilder<AddQuotationBloc, AddQuotationState>(
         builder: (context, state) {
@@ -37,6 +38,7 @@ class _SeeTenderState extends State<SeeTender> {
         Map<String, List<Tender>> recivevedLists = state.tenderList;
         previousTenders = recivevedLists["previous"]!;
         currentTenders = recivevedLists["current"]!;
+        acceptedTenders = recivevedLists["accepted"]!;
       } else if(state is FetchTendersQuotationFailureState){
         return const Text("No Tenders Found");
       }
@@ -92,6 +94,31 @@ class _SeeTenderState extends State<SeeTender> {
                 )
               : PreviousQuotations(
                   previousTenders: previousTenders,
+                  fromPreviousQuotation: true),
+                  const SizedBox(
+            height: 20,
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Text(
+              'Accepted Quotation',
+              style: GoogleFonts.poppins(
+                fontWeight: FontWeight.w500,
+                fontSize: 18,
+                color: const Color(0xff8C33C1),
+              ),
+            ),
+          ),
+          acceptedTenders.isEmpty
+              ? Column(
+                  children: const [
+                    SizedBox(height: 20),
+                    Center(child: Text("No Accepted Quotations found")),
+                    SizedBox(height: 20),
+                  ],
+                )
+              : PreviousQuotations(
+                  previousTenders: acceptedTenders,
                   fromPreviousQuotation: true),
           const SizedBox(
             height: 50,
@@ -149,14 +176,17 @@ class _PreviousQuotationsState extends State<PreviousQuotations> {
                   if (widget.fromPreviousQuotation == null) {
                     Navigator.pushNamed(context, MyRoutes.bidsRoute,
                         arguments: BidsScreenArgs(
-                            tenderId: widget.previousTenders[index].tenderId!));
+                            tender: widget.previousTenders[index]));
                   } else {
                     await Navigator.pushNamed(context, MyRoutes.quotationRoute,
                         arguments: QuotationScreenArguments(
                             tenderData: tender,
                             fromPreviousQuotation:
                                 widget.fromPreviousQuotation));
+                                if(!widget.fromPreviousQuotation!){
+
                     addQuotationBloc.add(FetchTendersQuotation());
+                                }
                   }
                 },
                 leading: ConstrainedBox(

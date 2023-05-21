@@ -10,6 +10,7 @@ class QuotationProvider {
   Future<Map<String, List<Tender>>> getAllQuotations() async {
     List<Tender> currentTenderList = [];
     List<Tender> previousTenderList = [];
+    List<Tender> acceptedTenderList = [];
     QuerySnapshot<Map<String, dynamic>> recievedTenders =
         await FirebaseFirestore.instance
             .collection('UserTenderQuotation')
@@ -32,16 +33,24 @@ class QuotationProvider {
         tenderData['tenderQuotId'] = data.id;
         tenderData["tenderId"] = data["tenderId"];
         if (data.data().toString().contains('quotationPrice')) {
+          if(data.data().toString().contains('accepted') ){
+
+          tenderData["accepted"] = data["accepted"];
+          }
           tenderData["quotationPrice"] = data["quotationPrice"];
           Tender tender = Tender.fromMap(tenderData);
-          previousTenderList.add(tender);
+          if (data.data().toString().contains('accepted') && tenderData["accepted"] != null && tenderData["accepted"]) {
+            acceptedTenderList.add(tender);
+          }else{
+            previousTenderList.add(tender);
+          }
         } else {
           Tender tender = Tender.fromMap(tenderData);
           currentTenderList.add(tender);
         }
       }
     }
-    return {"previous": previousTenderList, "current": currentTenderList};
+    return {"previous": previousTenderList, "current": currentTenderList, "accepted": acceptedTenderList};
   }
 
   Future<bool> addQuotation(String userTenderQuotationId, double price) async {

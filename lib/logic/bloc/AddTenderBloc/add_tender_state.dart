@@ -47,7 +47,7 @@ class AddImageFailureState extends AddTenderState {}
 class FetchQuotesInProgressState extends AddTenderState {}
 
 class FetchQuotesSuccessState extends AddTenderState {
-  final List<Quotes> quotesList;
+  final Map<String, List<Quotes>> quotesList;
   FetchQuotesSuccessState({
     required this.quotesList,
   });
@@ -57,6 +57,13 @@ class FetchQuotesFailureState extends AddTenderState {}
 
 class AwardQuoteTenderInProgressState extends AddTenderState {}
 
-class AwardQuoteTenderSuccessState extends AddTenderState {}
+class AwardQuoteTenderSuccessState extends AddTenderState {
+  final Quotes quote;
+  final bool accepted;
+  AwardQuoteTenderSuccessState({
+    required this.quote,
+    required this.accepted,
+  });
+}
 
 class AwardQuoteTenderFailureState extends AddTenderState {}

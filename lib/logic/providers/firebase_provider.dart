@@ -110,8 +110,11 @@ class FirebaseProvider {
     }
   }
 
-  Future<List<Quotes>> fetchQuotesforTender(String tenderId) async {
-    final List<Quotes> allQuotesList = [];
+  Future<Map<String,List<Quotes>>> fetchQuotesforTender(String tenderId) async {
+    final List<Quotes> acceptedQuotesList = [];
+    final List<Quotes> pendingQuotesList = [];
+    final List<Quotes> declinedQuotesList = [];
+
     QuerySnapshot<Map<String, dynamic>> tendUseQuoColl =
         await firestoreInst.collection('UserTenderQuotation').get();
     List<QueryDocumentSnapshot<Map<String, dynamic>>> snapshots =
@@ -120,24 +123,37 @@ class FirebaseProvider {
         snapshots.where((element) => element["tenderId"] == tenderId).toList();
     for (var doc in listTenderQuotes) {
       Map<String, dynamic> data = doc.data();
-      DocumentSnapshot<Map<String, dynamic>> usersInfo = await firestoreInst
-          .collection('User')
-          .doc(data["userId"])
-          .get();
+      DocumentSnapshot<Map<String, dynamic>> usersInfo =
+          await firestoreInst.collection('User').doc(data["userId"]).get();
       if (usersInfo.data() != null) {
         data["userInfo"] = Users.fromMap(usersInfo.data()!);
-      Quotes quote = Quotes.fromMap(data);
-      allQuotesList.add(quote);
+        data["tenderQuotId"] = doc.id;
+        Quotes quote = Quotes.fromMap(data);
+        if (data["accepted"] == null) {
+          pendingQuotesList.add(quote);
+        }else if(data["accepted"] == true){
+          acceptedQuotesList.add(quote);
+        }else{
+          declinedQuotesList.add(quote);
+        }
       }
-
     }
-    return allQuotesList;
+    return {
+      "acceptedQuotesList": acceptedQuotesList,
+      "declinedQuotesList": declinedQuotesList,
+      "pendingQuotesList": pendingQuotesList,
+      };
   }
 
-  Future<void> awardTender(Tender tender) async {
+  Future<bool> awardTender(Quotes quote, bool accepted) async {
     await firestoreInst
         .collection('UserTenderQuotation')
-        .doc(tender.tenderQuotId)
-        .update({"awarded": true});
+        .doc(quote.tenderQuotId)
+        .update({"accepted": accepted});
+    await firestoreInst
+        .collection('Tender')
+        .doc(quote.tenderId)
+        .update({"acceptedUserId": quote.userInfo.googleId});
+    return true;
   }
 }

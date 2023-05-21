@@ -34,8 +34,10 @@ class FetchQuotesEvent extends AddTenderEvent {
 }
 
 class AwardQuoteTenderEvent extends AddTenderEvent {
-  final Tender tender;
+  final Quotes quote;
+  final bool accepted;
   AwardQuoteTenderEvent({
-    required this.tender,
+    required this.quote,
+    required this.accepted,
   });
 }

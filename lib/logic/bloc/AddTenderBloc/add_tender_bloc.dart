@@ -20,7 +20,7 @@ class AddTenderBloc extends Bloc<AddTenderEvent, AddTenderState> {
     on<AddNewTender>(addNewTender);
     on<AddImage>(addImageTender);
     on<FetchQuotesEvent>(fetchQuotes);
-    // on<AwardQuoteTenderEvent>(addImageTender);
+    on<AwardQuoteTenderEvent>(awardTender);
   }
 
   FutureOr<void> productQuantityIncrease(
@@ -57,8 +57,22 @@ class AddTenderBloc extends Bloc<AddTenderEvent, AddTenderState> {
   FutureOr<void> fetchQuotes(
       FetchQuotesEvent event, Emitter<AddTenderState> emit) async {
     emit(FetchQuotesInProgressState());
-    List<Quotes> quotesList =
+    Map<String,List<Quotes>> quotesList =
         await firebaseProvider.fetchQuotesforTender(event.tenderId);
     emit(FetchQuotesSuccessState(quotesList: quotesList));
+  }
+
+  FutureOr<void> awardTender(
+      AwardQuoteTenderEvent event, Emitter<AddTenderState> emit) async {
+    emit(AwardQuoteTenderInProgressState());
+    bool awarded = await firebaseProvider.awardTender(event.quote, event.accepted);
+    if (awarded) {
+      emit(AwardQuoteTenderSuccessState(
+        accepted: event.accepted,
+        quote: event.quote,
+      ));
+    } else {
+      emit(AwardQuoteTenderFailureState());
+    }
   }
 }

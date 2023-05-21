@@ -9,6 +9,7 @@ class Tender {
   final double? price;
   final String? awardedId;
   final String? tenderId;
+  final bool? accepted;
   Tender({
     required this.tenderQuotId,
     required this.name,
@@ -18,6 +19,7 @@ class Tender {
     this.price,
     this.awardedId,
     this.tenderId,
+    this.accepted
   });
 
   Map<String, dynamic> toMap() {
@@ -38,6 +40,7 @@ class Tender {
         quantity: map['quantity'] ?? '',
         price: map["quotationPrice"],
         tenderId: map["tenderId"],
+        accepted: map["accepted"],
         // quotes: List<Map<String, dynamic>>.from(map['quotes'] as List),
         );
   }

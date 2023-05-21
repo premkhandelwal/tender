@@ -10,8 +10,8 @@ class QuotationScreenArguments {
 }
 
 class BidsScreenArgs {
-  final String tenderId;
+  final Tender tender;
   BidsScreenArgs({
-    required this.tenderId,
+    required this.tender,
   });
 }
