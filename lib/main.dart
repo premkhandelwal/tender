@@ -11,11 +11,9 @@ import 'package:vender/pages/add_new_tender_page.dart';
 import 'package:vender/pages/bids_page.dart';
 import 'package:vender/pages/tender_page.dart';
 import 'package:vender/pages/customer_dashboard.dart';
-import 'package:vender/pages/login_page.dart';
 import 'package:vender/pages/select_vendor.dart';
-import 'package:vender/pages/venderDashBoard.dart';
+import 'package:vender/pages/vender_dashboard.dart';
 import 'package:vender/provider/google_sign_in_provider.dart';
-import 'package:vender/provider/location_provider.dart';
 import 'package:vender/routes/routes.dart';
 import 'package:vender/widgets/sign_in_widget.dart';
 
@@ -54,13 +52,13 @@ class MyApp extends StatelessWidget {
           routes: {
             MyRoutes.venderDashBoardRoute: (context) => const VenderDashBoard(),
             MyRoutes.loginRoute: (context) => const SignInWidget(),
-            MyRoutes.selectVendorRoute: (context) => SelectVendor(),
+            MyRoutes.selectVendorRoute: (context) => const SelectVendor(),
             MyRoutes.customerDashboardRoute: (context) =>
                 const CustomerDashbord(),
             MyRoutes.tenderRoute: (context) => const TenderPage(),
             MyRoutes.addNewTenderRoute: (context) => const AddNewTenderPage(),
             MyRoutes.quotationRoute: (context) => const Quotation(),
-            MyRoutes.bidsRoute: (context) =>  TenderBigsPage(),
+            MyRoutes.bidsRoute: (context) =>  const TenderBigsPage(),
           },
         ),
       ),

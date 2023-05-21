@@ -56,16 +56,21 @@ class AddTenderBloc extends Bloc<AddTenderEvent, AddTenderState> {
 
   FutureOr<void> fetchQuotes(
       FetchQuotesEvent event, Emitter<AddTenderState> emit) async {
-    emit(FetchQuotesInProgressState());
-    Map<String,List<Quotes>> quotesList =
-        await firebaseProvider.fetchQuotesforTender(event.tenderId);
-    emit(FetchQuotesSuccessState(quotesList: quotesList));
+    try {
+      emit(FetchQuotesInProgressState());
+      Map<String, List<Quotes>> quotesList =
+          await firebaseProvider.fetchQuotesforTender(event.tenderId);
+      emit(FetchQuotesSuccessState(quotesList: quotesList));
+    } catch (e) {
+      emit(FetchQuotesFailureState());
+    }
   }
 
   FutureOr<void> awardTender(
       AwardQuoteTenderEvent event, Emitter<AddTenderState> emit) async {
     emit(AwardQuoteTenderInProgressState());
-    bool awarded = await firebaseProvider.awardTender(event.quote, event.accepted);
+    bool awarded =
+        await firebaseProvider.awardTender(event.quote, event.accepted);
     if (awarded) {
       emit(AwardQuoteTenderSuccessState(
         accepted: event.accepted,

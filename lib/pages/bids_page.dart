@@ -43,7 +43,7 @@ class TenderBigsPageState extends State<TenderBigsPage> {
           child: BlocConsumer<AddTenderBloc, AddTenderState>(
             listener: (context, state) {
               if (state is AwardQuoteTenderSuccessState) {
-                  pendingQuotesList.remove(state.quote);
+                pendingQuotesList.remove(state.quote);
                 if (state.accepted) {
                   acceptedQuotesList.add(state.quote);
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -73,7 +73,22 @@ class TenderBigsPageState extends State<TenderBigsPage> {
                 return const Text(
                     "Failed to fetch bids. Please try again later.");
               }
-              return SingleChildScrollView(
+              return pendingQuotesList.isEmpty &&
+                            acceptedQuotesList.isEmpty &&
+                            declinedQuotesList.isEmpty
+                        ? Center(
+                            child: Text(
+                              "No Quotes found",
+                              style: GoogleFonts.lato(
+                                letterSpacing: 0.5,
+                                textStyle: const TextStyle(
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black),
+                              ),
+                            ),
+                          )
+                        :  SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -131,6 +146,7 @@ class TenderBigsPageState extends State<TenderBigsPage> {
                             ],
                           )
                         : Container(),
+                    
                   ],
                 ),
               );

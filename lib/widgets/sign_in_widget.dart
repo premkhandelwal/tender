@@ -7,7 +7,6 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vender/constants.dart';
 import 'package:vender/models/user.dart';
-import 'package:vender/pages/login_page.dart';
 import 'package:vender/pages/select_vendor.dart';
 import 'package:vender/provider/google_sign_in_provider.dart';
 import 'package:vender/provider/location_provider.dart';
@@ -34,7 +33,6 @@ class _SignInWidgetState extends State<SignInWidget> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getCurrentPosition(context);
 
@@ -125,8 +123,6 @@ class _SignInWidgetState extends State<SignInWidget> {
                               ),
                             ),
                             onPressed: () async {
-                              String userDocId = "";
-
                               final provider =
                                   // ignore: use_build_context_synchronously
                                   Provider.of<GoogleSignInProvider>(context,
@@ -154,7 +150,6 @@ class _SignInWidgetState extends State<SignInWidget> {
                                       .doc(value.user!.uid)
                                       .set(userData, SetOptions(merge: true));
                                 }
-                                userDocId = value.user!.uid;
                               }).then((value) async {
                                 var collection = FirebaseFirestore.instance
                                     .collection('User');

@@ -71,7 +71,7 @@ class VenderDashBoard extends StatelessWidget {
                           ),
                           Row(
                             children: [
-                              Text("Quatation",
+                              Text("Quotation",
                                   style: GoogleFonts.lato(
                                       textStyle: TextStyle(
                                     fontSize: 19,
@@ -109,9 +109,10 @@ class VenderDashBoard extends StatelessWidget {
                     await googleSignIn.signOut();
 
                     
-                  });
+                  }).then((value) => 
                   Navigator.of(context).pushNamedAndRemoveUntil(
-                        MyRoutes.loginRoute, (route) => false);
+                        MyRoutes.loginRoute, (route) => false));
+                  
                 },
                 label: Padding(
                   padding: EdgeInsets.fromLTRB(

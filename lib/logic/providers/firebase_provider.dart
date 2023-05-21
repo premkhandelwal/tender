@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:vender/constants.dart';
-import 'package:vender/models/quotationModel.dart';
+import 'package:vender/models/quotation_model.dart';
 import 'package:vender/models/quotes.dart';
 import 'package:vender/models/tender.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -110,39 +110,49 @@ class FirebaseProvider {
     }
   }
 
-  Future<Map<String,List<Quotes>>> fetchQuotesforTender(String tenderId) async {
-    final List<Quotes> acceptedQuotesList = [];
-    final List<Quotes> pendingQuotesList = [];
-    final List<Quotes> declinedQuotesList = [];
+  Future<Map<String, List<Quotes>>> fetchQuotesforTender(
+      String tenderId) async {
+      final List<Quotes> acceptedQuotesList = [];
+    try {
+      final List<Quotes> pendingQuotesList = [];
+      final List<Quotes> declinedQuotesList = [];
 
-    QuerySnapshot<Map<String, dynamic>> tendUseQuoColl =
-        await firestoreInst.collection('UserTenderQuotation').get();
-    List<QueryDocumentSnapshot<Map<String, dynamic>>> snapshots =
-        tendUseQuoColl.docs;
-    List<QueryDocumentSnapshot<Map<String, dynamic>>> listTenderQuotes =
-        snapshots.where((element) => element["tenderId"] == tenderId).toList();
-    for (var doc in listTenderQuotes) {
-      Map<String, dynamic> data = doc.data();
-      DocumentSnapshot<Map<String, dynamic>> usersInfo =
-          await firestoreInst.collection('User').doc(data["userId"]).get();
-      if (usersInfo.data() != null) {
-        data["userInfo"] = Users.fromMap(usersInfo.data()!);
-        data["tenderQuotId"] = doc.id;
-        Quotes quote = Quotes.fromMap(data);
-        if (data["accepted"] == null) {
-          pendingQuotesList.add(quote);
-        }else if(data["accepted"] == true){
-          acceptedQuotesList.add(quote);
-        }else{
-          declinedQuotesList.add(quote);
+      QuerySnapshot<Map<String, dynamic>> tendUseQuoColl =
+          await firestoreInst.collection('UserTenderQuotation').get();
+      List<QueryDocumentSnapshot<Map<String, dynamic>>> snapshots =
+          tendUseQuoColl.docs;
+      List<QueryDocumentSnapshot<Map<String, dynamic>>> listTenderQuotes =
+          snapshots
+              .where((element) => element["tenderId"] == tenderId)
+              .toList();
+      for (var doc in listTenderQuotes) {
+        Map<String, dynamic> data = doc.data();
+        if (!doc.data().toString().contains('quotationPrice')) {
+          continue;
+        }
+        DocumentSnapshot<Map<String, dynamic>> usersInfo =
+            await firestoreInst.collection('User').doc(data["userId"]).get();
+        if (usersInfo.data() != null) {
+          data["userInfo"] = Users.fromMap(usersInfo.data()!);
+          data["tenderQuotId"] = doc.id;
+          Quotes quote = Quotes.fromMap(data);
+          if (data["accepted"] == null) {
+            pendingQuotesList.add(quote);
+          } else if (data["accepted"] == true) {
+            acceptedQuotesList.add(quote);
+          } else {
+            declinedQuotesList.add(quote);
+          }
         }
       }
-    }
-    return {
-      "acceptedQuotesList": acceptedQuotesList,
-      "declinedQuotesList": declinedQuotesList,
-      "pendingQuotesList": pendingQuotesList,
+      return {
+        "acceptedQuotesList": acceptedQuotesList,
+        "declinedQuotesList": declinedQuotesList,
+        "pendingQuotesList": pendingQuotesList,
       };
+    } catch (e) {
+      return {"acceptedQuotesList":acceptedQuotesList};
+    }
   }
 
   Future<bool> awardTender(Quotes quote, bool accepted) async {
@@ -150,10 +160,9 @@ class FirebaseProvider {
         .collection('UserTenderQuotation')
         .doc(quote.tenderQuotId)
         .update({"accepted": accepted});
-    await firestoreInst
-        .collection('Tender')
-        .doc(quote.tenderId)
-        .update({"acceptedUserId": quote.userInfo.googleId});
+    await firestoreInst.collection('Tender').doc(quote.tenderId).update({
+      "acceptedUserId": FieldValue.arrayUnion([quote.userInfo.googleId])
+    });
     return true;
   }
 }

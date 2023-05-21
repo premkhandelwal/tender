@@ -6,7 +6,7 @@ class Quotes {
   final String tenderQuotId;
   final String tenderId;
   final Users userInfo;
-  final double quotationPrice;
+  final double? quotationPrice;
   Quotes({
     required this.tenderQuotId,
     required this.tenderId,
@@ -29,7 +29,7 @@ class Quotes {
       tenderQuotId: map["tenderQuotId"] ?? '',
       tenderId: map['tenderId'] ?? '',
       userInfo: Users.fromMap(map['userInfo'].toMap()),
-      quotationPrice: map['quotationPrice']?.toDouble() ?? 0.0,
+      quotationPrice: map['quotationPrice']?.toDouble(),
     );
   }
 

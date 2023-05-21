@@ -5,13 +5,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:vender/routes/routes.dart';
 
 class SelectVendor extends StatelessWidget {
-  String? userDocId;
+  final String? userDocId;
 
-  SelectVendor({this.userDocId});
+  const SelectVendor({super.key, this.userDocId});
 
   @override
   Widget build(BuildContext context) {
-    print('docuser $userDocId');
     return Scaffold(
         body: SafeArea(
       child: Center(

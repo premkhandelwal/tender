@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vender/logic/bloc/AddTenderBloc/add_tender_bloc.dart';
-import 'package:vender/pages/venderseeTender.dart';
+import 'package:vender/pages/vendersee_tender.dart';
 import 'package:vender/routes/routes.dart';
 
 class TenderPage extends StatefulWidget {
@@ -184,7 +184,7 @@ class _TenderPageState extends State<TenderPage> {
                   if (state is! FetchTenderSuccessState) {
                     return Text("No Previous Tenders found");
                   }
-                  return PreviousQuotations(
+                  return state.tenderData.isEmpty ? Center(child: const Text("No Tenders Found")):  PreviousQuotations(
                     previousTenders: state.tenderData,
                     fromPreviousQuotation: null,
                   );
